@@ -1,2 +1,10 @@
-# Backend Python package dependencies.
-# Add FastAPI, SQLAlchemy, Uvicorn, and any other required packages here.
+# Backend Python package dependencies used by the Docker build.
+# Add or remove packages as your project requires.
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-multipart
+passlib[bcrypt]
+python-jose[cryptography]
+psycopg2-binary
