@@ -1,4 +1,4 @@
-# Campus Lost & Found
+# Campus Lost & Found System
 
 Campus Lost & Found is a web application to help students, staff, and visitors report, browse, and claim lost or found items on a campus.
 
