@@ -1,0 +1,8 @@
+# Root requirements file pointing to the backend dependencies.
+# For development, use: pip install -r backend/requirements.txt
+
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+python-multipart

@@ -1,0 +1,2 @@
+# Backend Python package dependencies.
+# Add FastAPI, SQLAlchemy, Uvicorn, and any other required packages here.
