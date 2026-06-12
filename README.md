@@ -43,4 +43,4 @@ Key features (planned)
 Next steps
 ----------
 
-This README will be extended with setup instructions, development guidelines, and deployment notes once core implementation files are in place.
+This README will be extended with setup instructions, development guidelines, and deployment notes once core implementation files are in place. Najib
