@@ -2,13 +2,11 @@
 # Import routers, register them on app, and add startup/shutdown events here.
 from fastapi import FastAPI
 
-from routers import items, claims
-
-from database import Base, engine
-
-from models.user import User
-from models.item import Item
-from models.claim import Claim
+from backend.routers import items, claims
+from backend.database import Base, engine
+from backend.models.user import User
+from backend.models.item import Item
+from backend.models.claim import Claim
 
 Base.metadata.create_all(bind=engine)
 

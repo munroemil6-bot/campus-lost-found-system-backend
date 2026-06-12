@@ -1,6 +1,6 @@
 # Define authentication-related API routes here.
 # Implement /login, /register, and session handling.
-from database import SessionLocal
+from backend.database import SessionLocal
 
 def get_db():
     db = SessionLocal()

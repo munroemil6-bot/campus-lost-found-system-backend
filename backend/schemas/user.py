@@ -2,9 +2,10 @@
 # Include schemas such as UserCreate, UserRead, and UserBase.
 # backend/services/user_service.py
 
-from models.user import User
 from pydantic import BaseModel
 from typing import Optional
+
+from backend.models.user import User
 
 class UserService:
 
