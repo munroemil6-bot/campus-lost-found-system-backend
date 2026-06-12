@@ -1,46 +1,100 @@
-# Campus Lost & Found
+# Campus Lost & Found System
 
-Campus Lost & Found is a web application to help students, staff, and visitors report, browse, and claim lost or found items on a campus.
+Campus Lost & Found is a web application that helps students, staff, and visitors report, browse, and claim lost or found items on a campus.
+
+## Overview
 
 Core ideas:
 - Report lost items with descriptions, photos, and locations.
-- Report found items and provide contact details for the finder.
-- Browse reported items and search or filter by category, location, and date.
+- Report found items and provide details for the finder.
+- Browse reported items and search by category, location, and date.
 - Submit and manage claims to reunite owners with their belongings.
-- Support user accounts and an admin dashboard for verification and moderation.
+- Support user authentication and an admin dashboard for moderation.
 
-This README currently only describes the application's purpose. Implementation details and setup instructions will be added later.
+## Backend
 
-About
------
+The backend is implemented in FastAPI and lives under the `backend/` folder.
 
-Campus Lost & Found provides a central, easy-to-use place for members of a campus community to report items they've lost or found, increasing the chance of reuniting owners with their belongings. The application is intended for universities, colleges, and other campus environments where items are commonly misplaced in shared spaces (libraries, lecture halls, cafeterias, transit stops, etc.).
+### Key backend files
 
-Problems This Solves
---------------------
+- `backend/main.py` — FastAPI app entrypoint
+- `backend/database.py` — SQLAlchemy engine, session, and base model
+- `backend/models/` — SQLAlchemy models for users, items, and claims
+- `backend/routers/` — API route definitions for items, claims, and auth
+- `backend/schemas/` — schema/service helpers and Pydantic request models
+- `backend/requirements.txt` — Python dependencies for the backend
+- `backend/Dockerfile.backend` — backend container build instructions
 
-- Fragmented reporting: Instead of relying on posters, bulletin boards, or ad-hoc messages, the app centralizes reports in one searchable system.
-- Time-consuming recovery: Owners often waste time searching multiple places; the app reduces search time by surfacing candidate matches and organized records.
-- Lack of traceability: Manual handoffs and lost paper logs make ownership verification hard; the app records claims, timestamps, and contact channels to create an auditable trail.
-- Missed connections: Finders and owners often fail to connect; the app provides structured claim workflows and notifications to coordinate reunions.
+### Prerequisites
 
-Who benefits
-------------
+- Python 3.12 (recommended)
+- `pip` for Python package installation
+- `docker` and `docker compose` if using containers
 
-- Students and staff who lost personal items and want an easy reporting/search experience.
-- People who find items and want a safe way to return them.
-- Campus security and administrative staff who need to moderate and track items and claims.
+### Install backend dependencies
 
-Key features (planned)
-----------------------
+From the project root:
 
-- Report creation for Lost and Found items (title, description, photos, location, date/time).
-- Browsing and search with filters (category, location, date, status).
-- Claim submission and verification workflows.
-- User accounts, authentication, and a role-based admin dashboard for moderation.
-- Notification emails or in-app messaging for claim updates.
+```bash
+cd backend
+python3 -m pip install -r requirements.txt
+```
 
-Next steps
-----------
+### Run backend locally
 
-This README will be extended with setup instructions, development guidelines, and deployment notes once core implementation files are in place. Najib
+From the project root:
+
+```bash
+uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Or from inside the `backend/` directory:
+
+```bash
+cd backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+The backend will be available at `http://127.0.0.1:8000`.
+
+### Run backend with Docker Compose
+
+From the project root:
+
+```bash
+docker compose up --build
+```
+
+This starts both the backend and frontend services. The backend is exposed on port `8000`.
+
+### Current backend endpoints
+
+- `GET /items/` — list all items
+- `POST /items/` — create a lost or found item
+- `GET /items/lost` — list lost items
+- `GET /items/found` — list found items
+- `GET /claims/` — list claims
+- `POST /claims/` — create a claim
+
+### Notes
+
+- The backend uses a SQLite database file named `lost_found.db` created in the `backend/` folder.
+- Backend code imports are now aligned to use the `backend` package path to avoid module resolution issues.
+
+## Frontend
+
+The frontend is implemented in the `frontend/` folder using Vite and Tailwind CSS.
+
+## What this project solves
+
+- Fragmented reporting is centralized in one searchable system.
+- Recovery becomes faster by surfacing candidate matches.
+- Claims and reports are auditable, reducing lost handoffs.
+- Campus communities get a safer, more structured way to reunite items with owners.
+
+## Next steps
+
+- Add frontend/backend authentication and user registration.
+- Implement item search and filtering in the UI.
+- Add claim verification and admin moderation workflows.
+- Add email or notification support for claim updates.
