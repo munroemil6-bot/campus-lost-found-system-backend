@@ -5,7 +5,6 @@ export default function ItemCard() {
       <h2>Item Title</h2>
       <p>Item Description</p>
       <p>Location: Item Location</p>
-      <p>Price: Item Price</p>
       <p>Contact: Item Contact Info</p>
     </article>
   )
