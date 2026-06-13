@@ -160,7 +160,7 @@ function openClaimModal(item) {
 
     try {
       const user = JSON.parse(localStorage.getItem('clf_user'))
-      const payload = { user_id: user?.user_id || null, item_id: item.id, proof: `Claim by ${name} <${email}>` }
+      const payload = { user_id: user?.user_id || null, item_id: item.id, proof: `Claim by ${name} <${email}>`, claimant_name: name, claimant_email: email }
       await (await import('../services/api')).createClaim(payload)
       alert('Claim submitted — admin will review it.')
       document.getElementById('clf-claim-modal')?.remove()

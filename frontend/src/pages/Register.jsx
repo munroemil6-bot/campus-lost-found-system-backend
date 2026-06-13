@@ -66,7 +66,7 @@ export default function Register() {
             onChange={event => setEmail(event.target.value)}
             required
             className="w-full rounded-3xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
-            placeholder="your.email@campus.edu"
+            placeholder="your.email@gmail.com"
           />
         </div>
 

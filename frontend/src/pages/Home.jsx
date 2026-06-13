@@ -24,10 +24,10 @@ export default function Home() {
             A central space for students and staff to report, browse, and claim lost or found items on campus with confidence. Keep our community connected.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link href="/report" className="inline-flex items-center justify-center rounded-full bg-amber-300 px-6 py-3 text-sm font-semibold text-blue-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-200">
+            <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-amber-300 px-6 py-3 text-sm font-semibold text-blue-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-200">
               Report an item
             </Link>
-            <Link href="/browse" className="inline-flex items-center justify-center rounded-full border border-amber-300/30 bg-blue-950/70 px-6 py-3 text-sm font-semibold text-amber-100 transition hover:bg-blue-900">
+            <Link to="/browse" className="inline-flex items-center justify-center rounded-full border border-amber-300/30 bg-blue-950/70 px-6 py-3 text-sm font-semibold text-amber-100 transition hover:bg-blue-900">
               Browse reports
             </Link>
           </div>
@@ -56,7 +56,7 @@ export default function Home() {
             <p className="text-sm font-medium text-slate-400">Management</p>
             <p className="mt-1 text-sm text-slate-200">Access administrative tools and item queues.</p>
           </div>
-          <Link href="/admin" className="mt-4 inline-flex items-center text-sm font-semibold text-amber-300 hover:text-amber-200">
+          <Link to="/admin" className="mt-4 inline-flex items-center text-sm font-semibold text-amber-300 hover:text-amber-200">
             Open Admin Console &rarr;
           </Link>
         </div>
@@ -68,7 +68,7 @@ export default function Home() {
             <h3 className="text-xl font-bold text-amber-100">Recently reported</h3>
             <p className="text-sm text-slate-400">Latest updates across campus active matching logs</p>
           </div>
-          <Link href="/browse" className="text-sm font-semibold text-amber-300 hover:text-amber-200 hidden sm:block">
+          <Link to="/browse" className="text-sm font-semibold text-amber-300 hover:text-amber-200 hidden sm:block">
             View full directory
           </Link>
         </div>
@@ -88,7 +88,7 @@ export default function Home() {
                 <h4 className="mt-3 font-semibold text-slate-100">{item.title}</h4>
                 <p className="mt-1 text-xs text-slate-400">Near {item.location}</p>
               </div>
-              <Link href="/browse" className="mt-4 block text-center rounded-xl bg-blue-900/60 py-2 text-xs font-semibold text-amber-200 hover:bg-blue-800 transition">
+              <Link to="/browse" className="mt-4 block text-center rounded-xl bg-blue-900/60 py-2 text-xs font-semibold text-amber-200 hover:bg-blue-800 transition">
                 View entry details
               </Link>
             </div>

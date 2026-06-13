@@ -8,8 +8,10 @@ class Claim(Base):
 
     id = Column(Integer, primary_key=True)
 
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     item_id = Column(Integer, ForeignKey("items.id"))
 
     proof = Column(String)
+    claimant_name = Column(String, nullable=True)
+    claimant_email = Column(String, nullable=True)
     status = Column(String, default="pending")
