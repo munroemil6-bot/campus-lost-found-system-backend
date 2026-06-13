@@ -213,20 +213,28 @@ GitHub Pages can host the frontend only. The backend must be deployed separately
 
 This repository uses GitHub Actions to build and deploy the frontend to Pages. The backend URL is injected at build time by the `FRONTEND_API_URL` secret.
 
-1. Create a public backend endpoint, for example:
-   - `https://campus-backend.example.com`
+1. Deploy the backend to a public host.
+   - Recommended: Render.com, Railway.app, or any container-hosted FastAPI service.
+   - The backend must be reachable from the internet, for example:
+     - `https://campus-backend.onrender.com`
 
-2. In your GitHub repository settings, add the secret:
-   - `FRONTEND_API_URL` = `https://campus-backend.example.com`
+2. In GitHub repository settings, add these secrets:
+   - `FRONTEND_API_URL` = `https://campus-backend.onrender.com`
+   - `RENDER_API_KEY` = your Render API key (optional, if using the backend Render workflow)
+   - `RENDER_SERVICE_ID` = your Render service ID (optional, if using the backend Render workflow)
 
-3. Trigger the frontend deployment workflow:
+3. Trigger the backend deployment workflow if you want GitHub Actions to deploy the backend:
+   - `.github/workflows/render-deploy-backend.yml`
+
+4. Trigger the frontend deployment workflow:
    - `.github/workflows/gh-pages-deploy.yml`
+   - Or push to `main` to deploy automatically.
 
-4. Configure GitHub Pages to use:
+5. Configure GitHub Pages to use:
    - Source: `GitHub Actions`
 
-5. The published frontend will be available at:
-   `https://<your-github-username>.github.io/<your-repo>/`
+6. The published frontend will be available at:
+   `https://munroemil6-bot.github.io/campus-lost-found-system/`
 
 > Note: GitHub Pages cannot host FastAPI or any backend service. The backend must run on a public host or container service for external devices to access it.
 
