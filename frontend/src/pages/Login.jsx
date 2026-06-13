@@ -17,21 +17,22 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const data = await loginUser({ username, password })
+      const loginUsername = username
+      const loginPassword = password
+      const data = await loginUser({ username: loginUsername, password: loginPassword })
       setSuccess(data.message)
-      setUsername('')
-      setPassword('')
       // Save user locally for protected routes
       import('../utils/auth').then(mod => {
-        // enforce exact admin credentials: email admin@gmail.com password admin123 username admin
-        const isAdmin = data.email === 'admin@gmail.com' && username === 'admin' && password === 'admin123'
-        const userObj = { user_id: data.user_id, email: data.email, username }
+        const isAdmin = data.email === 'admin@gmail.com' && data.username === 'admin' && loginPassword === 'admin123'
+        const userObj = { user_id: data.user_id, email: data.email, username: data.username }
         mod.setCurrentUser(userObj)
         setTimeout(() => {
           if (isAdmin) navigate('/admin')
           else navigate('/student-dashboard')
         }, 600)
       })
+      setUsername('')
+      setPassword('')
     } catch (err) {
       setError(err?.response?.data?.detail || 'Login failed. Check your username and password.')
     } finally {
@@ -50,7 +51,7 @@ export default function Login() {
       <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-200" htmlFor="username">
-            Username
+            Username or Email
           </label>
           <input
             id="username"
@@ -59,7 +60,7 @@ export default function Login() {
             onChange={event => setUsername(event.target.value)}
             required
             className="w-full rounded-3xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
-            placeholder="Enter your username"
+            placeholder="Enter your username or email"
           />
         </div>
 
