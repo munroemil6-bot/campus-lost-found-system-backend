@@ -21,5 +21,6 @@ export function isAuthenticated() {
 
 export function isAdmin() {
   const u = getCurrentUser()
-  return !!u && u.email === 'admin@gmail.com'
+  // Admin is only valid when stored user matches expected admin email and username
+  return !!u && u.email === 'admin@gmail.com' && u.username === 'admin'
 }

@@ -30,11 +30,7 @@ export default function Navbar() {
             Register
           </Link>
         </li>
-        <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/admin">
-            Admin
-          </Link>
-        </li>
+        {/* Admin link removed from public navbar; admin access is via login only */}
       </ul>
     </nav>
   )

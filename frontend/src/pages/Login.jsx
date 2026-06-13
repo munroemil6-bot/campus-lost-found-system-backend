@@ -23,12 +23,14 @@ export default function Login() {
       setPassword('')
       // Save user locally for protected routes
       import('../utils/auth').then(mod => {
-        mod.setCurrentUser({ user_id: data.user_id, email: data.email, username })
-        // redirect
+        // enforce exact admin credentials: email admin@gmail.com password admin123 username admin
+        const isAdmin = data.email === 'admin@gmail.com' && username === 'admin' && password === 'admin123'
+        const userObj = { user_id: data.user_id, email: data.email, username }
+        mod.setCurrentUser(userObj)
         setTimeout(() => {
-          if (data.email === 'admin@gmail.com') navigate('/admin')
+          if (isAdmin) navigate('/admin')
           else navigate('/student-dashboard')
-        }, 800)
+        }, 600)
       })
     } catch (err) {
       setError(err?.response?.data?.detail || 'Login failed. Check your username and password.')
