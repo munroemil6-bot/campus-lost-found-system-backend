@@ -30,12 +30,13 @@ jobs:
         working-directory: frontend
         run: npm ci --legacy-peer-deps
 
-      - name: Validate backend API URL secret
-        if: ${{ !secrets.FRONTEND_API_URL }}
+      - name: Warn if FRONTEND_API_URL missing
         run: |
-          echo "ERROR: FRONTEND_API_URL secret is not set."
-          echo "Please set FRONTEND_API_URL to your deployed backend URL in repository settings."
-          exit 1
+          if [ -z "${{ secrets.FRONTEND_API_URL }}" ]; then
+            echo "WARN: FRONTEND_API_URL secret is not set; build will use default API resolution in the app."
+          else
+            echo "FRONTEND_API_URL provided. Proceeding with build."
+          fi
 
       - name: Build frontend
         working-directory: frontend
