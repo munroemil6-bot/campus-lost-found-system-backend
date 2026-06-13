@@ -55,7 +55,7 @@ The frontend is implemented in the `frontend/` folder using Vite, React, and Tai
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev -- --host
 ```
 
 Frontend runs on `http://localhost:3000`
@@ -102,7 +102,7 @@ http://localhost:3000
 When running in Docker, expose port `3000` and set `VITE_API_BASE_URL` to your backend address (default in `docker-compose.yml` is `http://localhost:8000`). Example run command from README sections:
 
 ```bash
-sudo docker run -p 3000:3000 -d --name campus-frontend-container -e VITE_API_BASE_URL=http://localhost:8000 campus-frontend
+sudo docker run -p 3000:3000 -d --name campus-frontend -e VITE_API_BASE_URL=http://localhost:8000 campus-frontend
 ```
 
 If testers are on the same machine, `http://localhost:3000` will load the frontend. If you need to share to other machines on your LAN, run Vite with `--host` and use the host machine's IP address:
@@ -176,21 +176,15 @@ Build and run both backend and frontend services using Docker.
 ### Build and Run Backend
 
 ```bash
-# Build backend image
 sudo docker build -f backend/Dockerfile.backend -t campus-backend ./backend
-
-# Run backend container on port 8000
-sudo docker run -p 8000:8000 -d --name campus-backend-container campus-backend
+sudo docker run -d --name campus-backend -p 8000:8000 campus-backend
 ```
 
 ### Build and Run Frontend
 
 ```bash
-# Build frontend image
 sudo docker build -f frontend/Dockerfile.frontend -t campus-frontend ./frontend
-
-# Run frontend container on port 3000 with API base URL
-sudo docker run -p 3000:3000 -d --name campus-frontend-container -e VITE_API_BASE_URL=http://localhost:8000 campus-frontend
+sudo docker run -d --name campus-frontend -p 3000:3000 -e VITE_API_BASE_URL=http://localhost:8000 campus-frontend
 ```
 
 ### Verify Containers Are Running
@@ -199,7 +193,7 @@ sudo docker run -p 3000:3000 -d --name campus-frontend-container -e VITE_API_BAS
 sudo docker ps --filter "name=campus"
 ```
 
-You should see both `campus-backend-container` and `campus-frontend-container` with status `Up`.
+You should see both `campus-backend` and `campus-frontend` with status `Up`.
 
 ### Alternative: Docker Compose
 

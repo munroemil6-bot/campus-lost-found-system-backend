@@ -1,27 +1,46 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { fetchItems } from '../services/api'
 
 export default function BrowseItems() {
-
-  const initialItems = [
-    { id: 1, title: 'Black laptop sleeve', type: 'Found', location: 'Library front desk', date: '2026-06-12' },
-    { id: 2, title: 'Student ID card', type: 'Lost', location: 'Science block', date: '2026-06-11' },
-    { id: 3, title: 'Wireless earbuds case', type: 'Found', location: 'Cafeteria', date: '2026-06-10' },
-    { id: 4, title: 'Blue backpack', type: 'Lost', location: 'Student Center', date: '2026-06-09' },
-    { id: 5, title: 'Keys with red tag', type: 'Found', location: 'Gymnasium', date: '2026-06-08' },
-    { id: 6, title: 'Scientific calculator', type: 'Lost', location: 'Engineering Lab', date: '2026-06-07' },
-  ]
-
-  
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [filterType, setFilterType] = useState('All')
 
+  useEffect(() => {
+    const loadItems = async () => {
+      setLoading(true)
+      try {
+        const data = await fetchItems()
+        setItems(data || [])
+      } catch (err) {
+        setItems([])
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const filteredItems = initialItems.filter((item) => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.location.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesType = filterType === 'All' || item.type === filterType
+    loadItems()
+
+    const onStorage = (e) => {
+      if (e.key === '__clf_last_action') {
+        loadItems()
+      }
+    }
+
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
+
+  const filteredItems = items.filter((item) => {
+    const title = item.name || item.title || ''
+    const location = item.location || ''
+    const itemType = (item.item_type || item.type || '').toLowerCase()
+    const matchesSearch = title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          location.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === 'All' || itemType === filterType.toLowerCase()
 
     return matchesSearch && matchesType
   })
@@ -70,41 +89,47 @@ export default function BrowseItems() {
       </section>
 
      
-      {filteredItems.length > 0 ? (
+      {loading ? (
+        <section className="rounded-2xl border border-blue-800/80 bg-blue-900/20 p-12 text-center">
+          <p className="text-lg font-semibold text-slate-300">Loading items...</p>
+        </section>
+      ) : filteredItems.length > 0 ? (
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredItems.map((item) => (
-            <article
-              key={item.id}
-              className="flex flex-col justify-between rounded-2xl border border-blue-800/80 bg-blue-900/50 p-5 shadow-lg transition hover:border-blue-700"
-            >
-              <div>
-                <div className="flex items-center justify-between gap-2">
-                  <span
-                    className={`rounded-full px-3 py-0.5 text-xs font-semibold ring-1 ${
-                      item.type === 'Found'
-                        ? 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/20'
-                        : 'bg-rose-500/15 text-rose-300 ring-rose-500/20'
-                    }`}
-                  >
-                    {item.type}
-                  </span>
-                  <span className="text-xs text-slate-400">{item.date}</span>
+          {filteredItems.map((item) => {
+            const itemType = (item.item_type || item.type || 'Found').charAt(0).toUpperCase() + (item.item_type || item.type || 'Found').slice(1)
+            return (
+              <article
+                key={item.id}
+                className="flex flex-col justify-between rounded-2xl border border-blue-800/80 bg-blue-900/50 p-5 shadow-lg transition hover:border-blue-700"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={`rounded-full px-3 py-0.5 text-xs font-semibold ring-1 ${
+                        itemType === 'Found'
+                          ? 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/20'
+                          : 'bg-rose-500/15 text-rose-300 ring-rose-500/20'
+                      }`}
+                    >
+                      {itemType}
+                    </span>
+                    <span className="text-xs text-slate-400">{item.category || item.date || 'Unknown'}</span>
+                  </div>
+
+                  <h4 className="mt-4 text-lg font-bold text-amber-100">{item.name || item.title}</h4>
+                  <p className="mt-1 text-sm text-slate-300">
+                    <span className="font-medium text-slate-400">Location:</span> {item.location || 'Unknown'}
+                  </p>
                 </div>
 
-                <h4 className="mt-4 text-lg font-bold text-amber-100">{item.title}</h4>
-                <p className="mt-1 text-sm text-slate-300">
-                  <span className="font-medium text-slate-400">Location:</span> {item.location}
-                </p>
-              </div>
-
-              <div className="mt-5 pt-4 border-t border-blue-800/40">
-                <ClaimButton item={item} />
-              </div>
-            </article>
-          ))}
+                <div className="mt-5 pt-4 border-t border-blue-800/40">
+                  <ClaimButton item={item} />
+                </div>
+              </article>
+            )
+          })}
         </section>
       ) : (
-        
         <section className="rounded-2xl border border-dashed border-blue-800/80 bg-blue-900/20 p-12 text-center">
           <p className="text-lg font-semibold text-slate-300">No reported items match your criteria.</p>
           <p className="mt-1 text-sm text-slate-400">Try adjusting your search filters or check back later.</p>

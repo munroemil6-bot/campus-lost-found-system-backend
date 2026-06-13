@@ -1,12 +1,34 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from 'react'
+import { fetchItems } from '../services/api'
 
 export default function Home() {
-  // 1. Mock data for featured/recent activity cards
-  const recentItems = [
-    { id: 1, title: 'Black laptop sleeve', type: 'Found', location: 'Library front desk', time: '2 hours ago' },
-    { id: 2, title: 'Student ID card', type: 'Lost', location: 'Science block', time: '5 hours ago' },
-    { id: 3, title: 'Wireless earbuds case', type: 'Found', location: 'Cafeteria', time: 'Yesterday' },
-  ]
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true)
+      try {
+        const data = await fetchItems()
+        setItems(data || [])
+      } catch (err) {
+        setItems([])
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const activeReports = items.length
+  const recentItems = items.slice(0, 3).map((item) => ({
+    id: item.id,
+    title: item.name || 'Report',
+    type: item.item_type || 'Found',
+    location: item.location || 'Unknown',
+    time: 'Recently reported',
+  }))
 
   return (
     <main className="mx-auto max-w-7xl space-y-8 p-4 sm:p-6 lg:p-8">
@@ -39,8 +61,8 @@ export default function Home() {
       
         <div className="rounded-2xl border border-blue-800/60 bg-blue-950/50 p-6">
           <p className="text-sm font-medium text-slate-400">Active Reports</p>
-          <p className="mt-2 text-3xl font-bold text-amber-100">32</p>
-          <p className="mt-1 text-xs text-emerald-400">▲ 4 new entries today</p>
+          <p className="mt-2 text-3xl font-bold text-amber-100">{activeReports}</p>
+          <p className="mt-1 text-xs text-emerald-400">▲ {Math.max(0, Math.min(activeReports, 4))} new entries today</p>
         </div>
 
        

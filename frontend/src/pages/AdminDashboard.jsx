@@ -10,11 +10,14 @@ export default function AdminDashboard() {
   const user = getCurrentUser()
 
   const [items, setItems] = useState([])
+  const resolvedClaims = claims.filter((c) => (c.status || '').toLowerCase() === 'resolved')
+  const pendingClaims = claims.filter((c) => (c.status || '').toLowerCase() !== 'resolved')
+
   const stats = [
-    { label: 'Open reports', value: '24' },
-    { label: 'Pending claims', value: String(claims.length) },
-    { label: 'Matched items', value: '13' },
-    { label: 'Resolved today', value: '5' },
+    { label: 'Open reports', value: String(items.length) },
+    { label: 'Pending claims', value: String(pendingClaims.length) },
+    { label: 'Matched items', value: String(resolvedClaims.length) },
+    { label: 'Resolved today', value: String(resolvedClaims.length) },
   ]
 
   const reviewItems = items.length > 0 ? items.map(it => ({ title: it.name || `Item ${it.id}`, type: it.item_type || 'Found', location: it.location || 'Unknown', status: 'Needs review' })) : [
