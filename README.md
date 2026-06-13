@@ -207,36 +207,34 @@ This starts both services together. The compose file sets up networking and envi
 
 ---
 
-## GitHub Pages Deployment
+## Public Deployment with GitHub Actions + Render
 
-GitHub Pages can host the frontend only. The backend must be deployed separately to a public URL, and the frontend must be built with that backend URL.
+This repository can deploy both the frontend and backend publicly using GitHub Actions and Render.
 
-This repository uses GitHub Actions to build and deploy the frontend to Pages. The backend URL is injected at build time by the `FRONTEND_API_URL` secret.
+### Required GitHub secrets
 
-1. Deploy the backend to a public host.
-   - Recommended: Render.com, Railway.app, or any container-hosted FastAPI service.
-   - The backend must be reachable from the internet, for example:
-     - `https://campus-backend.onrender.com`
+In your GitHub repository settings, add:
+- `FRONTEND_API_URL` = your public backend URL, e.g. `https://campus-backend.onrender.com`
+- `RENDER_API_KEY` = your Render API key
+- `RENDER_SERVICE_ID` = your Render backend service ID
+- `RENDER_FRONTEND_SERVICE_ID` = your Render frontend service ID
 
-2. In GitHub repository settings, add these secrets:
-   - `FRONTEND_API_URL` = `https://campus-backend.onrender.com`
-   - `RENDER_API_KEY` = your Render API key (optional, if using the backend Render workflow)
-   - `RENDER_SERVICE_ID` = your Render service ID (optional, if using the backend Render workflow)
+### Workflows
 
-3. Trigger the backend deployment workflow if you want GitHub Actions to deploy the backend:
-   - `.github/workflows/render-deploy-backend.yml`
+- Backend deploy workflow: `.github/workflows/render-deploy-backend.yml`
+- Frontend deploy workflow: `.github/workflows/render-deploy-frontend.yml`
 
-4. Trigger the frontend deployment workflow:
-   - `.github/workflows/gh-pages-deploy.yml`
-   - Or push to `main` to deploy automatically.
+### Deploy process
 
-5. Configure GitHub Pages to use:
-   - Source: `GitHub Actions`
+1. Create Render services for backend and frontend.
+2. Add the required GitHub secrets.
+3. Push to `main` or use workflow dispatch.
+4. The frontend will be built with `VITE_API_BASE_URL` set to your public backend URL.
+5. Use the Render frontend URL as the live site address.
 
-6. The published frontend will be available at:
-   `https://munroemil6-bot.github.io/campus-lost-found-system/`
+> GitHub Pages is not required for this deployment. This setup uses GitHub Actions + Render so the site is accessible globally.
 
-> Note: GitHub Pages cannot host FastAPI or any backend service. The backend must run on a public host or container service for external devices to access it.
+---
 
 ---
 

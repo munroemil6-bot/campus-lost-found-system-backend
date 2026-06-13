@@ -92,23 +92,24 @@ function normalizeApiBaseUrl(url) {
     .replace(/https?:\/\/localhost:8000/gi, match => match.startsWith('https') ? 'https://localhost:8000' : 'http://localhost:8000')
 }
 
+function isPrivateHost(hostname) {
+  return /^(localhost|127\.0\.0\.1|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/i.test(hostname)
+}
+
 function getDefaultApiBaseUrl() {
   if (typeof window === 'undefined') return 'http://localhost:8000'
   const protocol = window.location.protocol || 'http:'
   const hostname = window.location.hostname || 'localhost'
 
-  // On GitHub Pages or public hosts, the backend must be configured explicitly.
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return `${protocol}//${hostname}:8000`
   }
 
-  if (hostname.endsWith('.github.io') || hostname === 'github.io') {
-    return undefined
+  if (isPrivateHost(hostname)) {
+    return `${protocol}//${hostname}:8000`
   }
 
-  // When the app is accessed from another device on the same network,
-  // use the current host's IP or hostname with port 8000.
-  return `${protocol}//${hostname}:8000`
+  return undefined
 }
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
