@@ -15,18 +15,23 @@ export default function Navbar() {
           </Link>
         </li>
         <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/lost">
-            Lost Items
+          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/browse">
+            Browse
           </Link>
         </li>
         <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/found">
-            Found Items
+          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/report/lost">
+            Report Lost
           </Link>
         </li>
         <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/submit">
-            Submit Item
+          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/report/found">
+            Report Found
+          </Link>
+        </li>
+        <li>
+          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/claims">
+            My Claims
           </Link>
         </li>
         <li>
@@ -40,9 +45,9 @@ export default function Navbar() {
           </Link>
         </li>
         <li>
-          <a className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" href="/admin">
+          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/admin">
             Admin
-          </a>
+          </Link>
         </li>
       </ul>
     </nav>

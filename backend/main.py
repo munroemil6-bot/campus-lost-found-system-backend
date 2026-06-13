@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, engine
 from models.user import User
-from routers import auth
+from models.item import Item
+from models.claim import Claim
+from routers import auth, items, claims
 
 Base.metadata.create_all(bind=engine)
 

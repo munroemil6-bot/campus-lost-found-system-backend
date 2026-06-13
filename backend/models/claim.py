@@ -1,7 +1,7 @@
 # Define the SQLAlchemy Claim model here.
 # Include fields for item_id, user_id, status, and timestamps.
 from sqlalchemy import Column, Integer, String, ForeignKey
-from backend.database import Base 
+from database import Base
 
 class Claim(Base):
     __tablename__ = "claims"

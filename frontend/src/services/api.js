@@ -18,3 +18,18 @@ export async function loginUser(data) {
   const response = await api.post('/auth/login', data)
   return response.data
 }
+
+export async function fetchItems() {
+  const response = await api.get('/items')
+  return response.data
+}
+
+export async function createItem(data) {
+  const response = await api.post('/items', data)
+  return response.data
+}
+
+export async function fetchClaims() {
+  const response = await api.get('/claims')
+  return response.data
+}

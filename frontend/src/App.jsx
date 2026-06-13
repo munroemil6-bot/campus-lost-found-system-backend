@@ -4,8 +4,10 @@ import Home from './pages/Home'
 import AdminDashboard from './pages/AdminDashboard'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import ItemCard from './components/ItemCard'
-import LoadingSpinner from './components/LoadingSpinner'
+import BrowseItems from './pages/BrowseItems'
+import ReportLost from './pages/ReportLost'
+import ReportFound from './pages/ReportFound'
+import MyClaims from './pages/MyClaims'
 import './index.css'
 
 export default function App() {
@@ -19,9 +21,10 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/lost" element={<ItemCard />} />
-            <Route path="/found" element={<ItemCard />} />
-            <Route path="/submit" element={<ItemCard />} />
+            <Route path="/browse" element={<BrowseItems />} />
+            <Route path="/report/lost" element={<ReportLost />} />
+            <Route path="/report/found" element={<ReportFound />} />
+            <Route path="/claims" element={<MyClaims />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>

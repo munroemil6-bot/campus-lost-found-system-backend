@@ -1,7 +1,7 @@
 # Define the SQLAlchemy Item model here.
 # Include fields for title, description, location, status, and owner.
 from sqlalchemy import Column, Integer, String, ForeignKey
-from backend.database import Base
+from database import Base
 
 class Item(Base):
     __tablename__ = "items"

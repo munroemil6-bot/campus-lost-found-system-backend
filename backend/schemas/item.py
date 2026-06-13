@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from backend.models.item import Item as ItemModel
+from models.item import Item as ItemModel
 
 class ItemCreate(BaseModel):
     name: str

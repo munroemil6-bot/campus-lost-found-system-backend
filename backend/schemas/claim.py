@@ -3,7 +3,7 @@
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from backend.models.claim import Claim as ClaimModel
+from models.claim import Claim as ClaimModel
 
 class ClaimCreate(BaseModel):
     user_id: int
