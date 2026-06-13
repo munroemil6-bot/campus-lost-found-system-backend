@@ -21,7 +21,15 @@ export default function Login() {
       setSuccess(data.message)
       setUsername('')
       setPassword('')
-      setTimeout(() => navigate('/'), 1200)
+      // Save user locally for protected routes
+      import('../utils/auth').then(mod => {
+        mod.setCurrentUser({ user_id: data.user_id, email: data.email, username })
+        // redirect
+        setTimeout(() => {
+          if (data.email === 'admin@gmail.com') navigate('/admin')
+          else navigate('/student-dashboard')
+        }, 800)
+      })
     } catch (err) {
       setError(err?.response?.data?.detail || 'Login failed. Check your username and password.')
     } finally {

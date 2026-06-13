@@ -8,6 +8,7 @@ import BrowseItems from './pages/BrowseItems'
 import ReportLost from './pages/ReportLost'
 import ReportFound from './pages/ReportFound'
 import MyClaims from './pages/MyClaims'
+import StudentDashboard from './pages/StudentDashboard'
 import './index.css'
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <Route path="/report/lost" element={<ReportLost />} />
             <Route path="/report/found" element={<ReportFound />} />
             <Route path="/claims" element={<MyClaims />} />
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>

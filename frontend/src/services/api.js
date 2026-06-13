@@ -33,3 +33,8 @@ export async function fetchClaims() {
   const response = await api.get('/claims')
   return response.data
 }
+
+export async function createClaim(data) {
+  const response = await api.post('/claims', data)
+  return response.data
+}

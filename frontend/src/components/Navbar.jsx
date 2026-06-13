@@ -19,21 +19,7 @@ export default function Navbar() {
             Browse
           </Link>
         </li>
-        <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/report/lost">
-            Report Lost
-          </Link>
-        </li>
-        <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/report/found">
-            Report Found
-          </Link>
-        </li>
-        <li>
-          <Link className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" to="/claims">
-            My Claims
-          </Link>
-        </li>
+        
         <li>
           <Link className="rounded-full px-4 py-2 border border-amber-300/30 bg-blue-900/90 text-amber-100 transition hover:bg-blue-900" to="/login">
             Login

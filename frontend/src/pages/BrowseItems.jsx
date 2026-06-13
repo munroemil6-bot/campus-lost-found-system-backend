@@ -98,9 +98,7 @@ export default function BrowseItems() {
               </div>
 
               <div className="mt-5 pt-4 border-t border-blue-800/40">
-                <button className="w-full rounded-full border border-amber-300/30 bg-blue-950/60 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-300 hover:text-blue-950">
-                  {item.type === 'Found' ? 'Claim item' : 'I found this'}
-                </button>
+                <ClaimButton item={item} />
               </div>
             </article>
           ))}
@@ -114,4 +112,60 @@ export default function BrowseItems() {
       )}
     </main>
   )
+}
+
+function ClaimButton({ item }) {
+  // quick check for auth stored in localStorage
+  const isLogged = !!localStorage.getItem('clf_user')
+
+  if (!isLogged) {
+    return (
+      <button onClick={() => (window.location.href = '/login')} className="w-full rounded-full border border-amber-300/30 bg-blue-950/60 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-300 hover:text-blue-950">
+        {item.type === 'Found' ? 'Claim item' : 'I found this'}
+      </button>
+    )
+  }
+
+  return (
+    <button onClick={() => openClaimModal(item)} className="w-full rounded-full border border-amber-300/30 bg-emerald-500/60 py-2 text-sm font-semibold text-amber-200 transition hover:bg-emerald-400 hover:text-blue-950">
+      {item.type === 'Found' ? 'Claim item' : 'I found this'}
+    </button>
+  )
+}
+
+function openClaimModal(item) {
+  const container = document.createElement('div')
+  container.id = 'clf-claim-modal'
+  document.body.appendChild(container)
+
+  container.innerHTML = `
+  <div style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.6);z-index:9999">
+    <div style="background:#031025;padding:20px;border-radius:12px;max-width:480px;width:90%;color:#e6eef8">
+      <h3 style="margin:0 0 10px;font-size:18px">Claim this item</h3>
+      <p style="margin:0 0 12px">Please provide your full name and email to submit a claim.</p>
+      <input id="clf-claim-name" placeholder="Full name" style="width:100%;padding:10px;margin-bottom:8px;border-radius:8px;border:1px solid #1f2937;background:#0b1220;color:#e6eef8" />
+      <input id="clf-claim-email" placeholder="Email" style="width:100%;padding:10px;margin-bottom:12px;border-radius:8px;border:1px solid #1f2937;background:#0b1220;color:#e6eef8" />
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button id="clf-claim-cancel" style="padding:8px 12px;border-radius:8px;background:#0b1220;border:1px solid #374151;color:#e6eef8">Cancel</button>
+        <button id="clf-claim-submit" style="padding:8px 12px;border-radius:8px;background:#10b981;color:#021124">Submit claim</button>
+      </div>
+    </div>
+  </div>`
+
+  document.getElementById('clf-claim-cancel').onclick = () => { document.getElementById('clf-claim-modal')?.remove() }
+  document.getElementById('clf-claim-submit').onclick = async () => {
+    const name = document.getElementById('clf-claim-name').value
+    const email = document.getElementById('clf-claim-email').value
+    if (!name || !email) return alert('Please enter name and email')
+
+    try {
+      const user = JSON.parse(localStorage.getItem('clf_user'))
+      const payload = { user_id: user?.user_id || null, item_id: item.id, proof: `Claim by ${name} <${email}>` }
+      await (await import('../services/api')).createClaim(payload)
+      alert('Claim submitted — admin will review it.')
+      document.getElementById('clf-claim-modal')?.remove()
+    } catch (err) {
+      alert('Unable to submit claim')
+    }
+  }
 }
