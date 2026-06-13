@@ -87,12 +87,6 @@ export default function AdminDashboard() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <button onClick={() => alert('Export not implemented')} className="rounded-full bg-amber-300 px-5 py-2 text-sm font-semibold text-blue-950 transition hover:bg-amber-200">
-              Export report
-            </button>
-            <button onClick={() => alert('Add notice not implemented')} className="rounded-full border border-amber-300/40 bg-blue-950/70 px-5 py-2 text-sm font-semibold text-amber-100 transition hover:bg-blue-900">
-              Add notice
-            </button>
             <button onClick={signOut} className="rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white">
               Sign out
             </button>
