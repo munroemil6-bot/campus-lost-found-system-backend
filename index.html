@@ -4,10 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Campus Lost & Found</title>
-  <meta http-equiv="refresh" content="0;url=http://localhost:3000" />
-  <script>
-    window.location.replace('http://localhost:3000')
-  </script>
   <style>
     body {
       margin: 0;
@@ -79,20 +75,21 @@
   <div class="container">
     <h1>Campus Lost & Found</h1>
     <p>This repo uses Docker Compose to start the frontend and backend together.</p>
-    <p>When the services are running, you can open the frontend app directly at:</p>
-    <pre>http://localhost:3000</pre>
+    <p>After starting the app, open the frontend from another device using your computer's LAN IP address, not localhost.</p>
+    <p>For example:</p>
+    <pre>http://192.168.x.x:3000</pre>
 
     <p class="notice">
-      Redirecting you to the frontend now... If the app is not running, start it with:
+      Start the services with:
     </p>
 
     <pre>docker compose up --build -d</pre>
 
     <div class="links">
-      <a class="card" href="http://localhost:3000" target="_blank" rel="noreferrer">
+      <a class="card" href="#" onclick="alert('Use your host IP and port 3000 from another device instead of localhost.')">
         Open frontend app
       </a>
-      <a class="card" href="http://localhost:8000" target="_blank" rel="noreferrer">
+      <a class="card" href="#" onclick="alert('Use your host IP and port 8000 from another device instead of localhost.')">
         Open backend API root
       </a>
     </div>
