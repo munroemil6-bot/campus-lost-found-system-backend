@@ -1,5 +1,35 @@
 import axios from 'axios'
 
+const FALLBACK_ITEMS = [
+  {
+    id: 1,
+    item_type: 'found',
+    name: 'Blue campus keychain',
+    location: 'Library',
+    category: 'Accessories',
+    date: 'Yesterday',
+    description: 'Small blue keychain with the university logo attached.',
+  },
+  {
+    id: 2,
+    item_type: 'lost',
+    name: 'Student ID card',
+    location: 'Cafeteria',
+    category: 'Cards',
+    date: 'Today',
+    description: 'Red student ID card with a photo and student name.',
+  },
+  {
+    id: 3,
+    item_type: 'found',
+    name: 'Wireless earbuds',
+    location: 'Engineering building',
+    category: 'Electronics',
+    date: 'This week',
+    description: 'White wireless earbuds in a charging case.',
+  },
+]
+
 function normalizeApiBaseUrl(url) {
   if (!url) return undefined
   return url
@@ -12,12 +42,25 @@ function getDefaultApiBaseUrl() {
   if (typeof window === 'undefined') return 'http://localhost:8000'
   const protocol = window.location.protocol || 'http:'
   const hostname = window.location.hostname || 'localhost'
-  return `${protocol}//${hostname}:8000`
+
+  // Only default to localhost when running locally.
+  // On GitHub Pages or another public host, the backend must be configured explicitly.
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return `${protocol}//${hostname}:8000`
+  }
+
+  return undefined
 }
 
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
 const normalizedBaseUrl = normalizeApiBaseUrl(rawBaseUrl)
 const BASE_URL = normalizedBaseUrl || getDefaultApiBaseUrl()
+
+if (!BASE_URL && typeof window !== 'undefined') {
+  console.warn(
+    'No frontend API URL configured. Set VITE_API_BASE_URL for local builds or FRONTEND_API_URL in GitHub Actions to point to your deployed backend.'
+  )
+}
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -46,8 +89,17 @@ export async function loginUser(data) {
 }
 
 export async function fetchItems() {
-  const response = await api.get('/items')
-  return response.data
+  if (!BASE_URL) {
+    return FALLBACK_ITEMS
+  }
+
+  try {
+    const response = await api.get('/items')
+    return response.data
+  } catch (err) {
+    console.warn('Unable to fetch items from backend, showing fallback items.', err)
+    return FALLBACK_ITEMS
+  }
 }
 
 export async function createItem(data) {
@@ -60,8 +112,17 @@ export async function createItem(data) {
 }
 
 export async function fetchClaims() {
-  const response = await api.get('/claims')
-  return response.data
+  if (!BASE_URL) {
+    return []
+  }
+
+  try {
+    const response = await api.get('/claims')
+    return response.data
+  } catch (err) {
+    console.warn('Unable to fetch claims from backend.', err)
+    return []
+  }
 }
 
 export async function createClaim(data) {

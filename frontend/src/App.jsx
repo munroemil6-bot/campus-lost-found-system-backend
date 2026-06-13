@@ -14,7 +14,7 @@ import './index.css'
 export default function App() {
   return (
     <div className="min-h-screen bg-blue-950 text-slate-100">
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Navbar />
 
         <main className="px-4 py-6 sm:px-6 lg:px-8">
