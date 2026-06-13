@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, HashRouter, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import AdminDashboard from './pages/AdminDashboard'
@@ -10,6 +10,8 @@ import ReportFound from './pages/ReportFound'
 import MyClaims from './pages/MyClaims'
 import StudentDashboard from './pages/StudentDashboard'
 import './index.css'
+
+const Router = typeof window !== 'undefined' && window.location.hostname.includes('github.io') ? HashRouter : BrowserRouter
 
 export default function App() {
   return (

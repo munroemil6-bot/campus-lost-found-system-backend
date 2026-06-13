@@ -211,26 +211,22 @@ This starts both services together. The compose file sets up networking and envi
 
 GitHub Pages can host the frontend only. The backend must be deployed separately to a public URL, and the frontend must be built with that backend URL.
 
-This repo now deploys the frontend directly into `main/docs`, so no separate `gh-pages` branch is required.
+This repository uses GitHub Actions to build and deploy the frontend to Pages. The backend URL is injected at build time by the `FRONTEND_API_URL` secret.
 
 1. Create a public backend endpoint, for example:
    - `https://campus-backend.example.com`
 
-2. Build and deploy the frontend with the backend URL:
+2. In your GitHub repository settings, add the secret:
+   - `FRONTEND_API_URL` = `https://campus-backend.example.com`
 
-```bash
-cd frontend
-VITE_API_BASE_URL=https://campus-backend.example.com npm run deploy
-```
+3. Trigger the frontend deployment workflow:
+   - `.github/workflows/gh-pages-deploy.yml`
 
-3. In your GitHub repository settings, set Pages source to:
-   - Branch: `main`
-   - Folder: `/docs`
+4. Configure GitHub Pages to use:
+   - Source: `GitHub Actions`
 
-4. The published frontend will be available at:
+5. The published frontend will be available at:
    `https://<your-github-username>.github.io/<your-repo>/`
-
-5. Open that URL to see the frontend app.
 
 > Note: GitHub Pages cannot host FastAPI or any backend service. The backend must run on a public host or container service for external devices to access it.
 

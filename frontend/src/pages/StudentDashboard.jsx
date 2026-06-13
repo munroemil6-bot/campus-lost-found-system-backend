@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { clearCurrentUser, getCurrentUser } from '../utils/auth'
 import { useEffect, useState } from 'react'
 import { fetchClaims } from '../services/api'
+import { navigateToRoute } from '../utils/navigation'
 
 export default function StudentDashboard() {
   const user = getCurrentUser()
@@ -43,7 +44,7 @@ export default function StudentDashboard() {
         <div>
           <Link to="/browse" className="mr-3 text-sm text-slate-300">Browse</Link>
           <button
-            onClick={() => { clearCurrentUser(); window.location.href = '/' }}
+            onClick={() => { clearCurrentUser(); navigateToRoute('/') }}
             className="rounded-full bg-amber-300 px-3 py-1 text-sm font-semibold text-blue-950"
           >
             Sign out

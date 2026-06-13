@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { fetchClaims, fetchItems } from '../services/api'
 import { getCurrentUser } from '../utils/auth'
 import { useNavigate } from 'react-router-dom'
+import { navigateToRoute } from '../utils/navigation'
 
 export default function AdminDashboard() {
   const navigate = useNavigate()
@@ -71,7 +72,7 @@ export default function AdminDashboard() {
 
   function signOut() {
     localStorage.removeItem('clf_user')
-    window.location.href = '/'
+    navigateToRoute('/')
   }
 
   return (

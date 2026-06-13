@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { fetchItems } from '../services/api'
+import { navigateToRoute } from '../utils/navigation'
 
 export default function BrowseItems() {
   const [items, setItems] = useState([])
@@ -146,7 +147,7 @@ function ClaimButton({ item }) {
 
   if (!isLogged) {
     return (
-      <button onClick={() => (window.location.href = '/login')} className="w-full rounded-full border border-amber-300/30 bg-blue-950/60 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-300 hover:text-blue-950">
+      <button onClick={() => navigateToRoute('/login')} className="w-full rounded-full border border-amber-300/30 bg-blue-950/60 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-300 hover:text-blue-950">
         {buttonLabel}
       </button>
     )
