@@ -1,9 +1,117 @@
-// Browse items page.
-// Add a list of reported items with search and filter controls.
+'use client'
+
+import { useState } from 'react'
+
 export default function BrowseItems() {
+
+  const initialItems = [
+    { id: 1, title: 'Black laptop sleeve', type: 'Found', location: 'Library front desk', date: '2026-06-12' },
+    { id: 2, title: 'Student ID card', type: 'Lost', location: 'Science block', date: '2026-06-11' },
+    { id: 3, title: 'Wireless earbuds case', type: 'Found', location: 'Cafeteria', date: '2026-06-10' },
+    { id: 4, title: 'Blue backpack', type: 'Lost', location: 'Student Center', date: '2026-06-09' },
+    { id: 5, title: 'Keys with red tag', type: 'Found', location: 'Gymnasium', date: '2026-06-08' },
+    { id: 6, title: 'Scientific calculator', type: 'Lost', location: 'Engineering Lab', date: '2026-06-07' },
+  ]
+
+  
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filterType, setFilterType] = useState('All')
+
+
+  const filteredItems = initialItems.filter((item) => {
+    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          item.location.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = filterType === 'All' || item.type === filterType
+
+    return matchesSearch && matchesType
+  })
+
   return (
-    <main>
-      {/* TODO: add item browsing UI here */}
+    <main className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6 lg:p-8">
+
+      <section className="rounded-3xl border border-blue-800/80 bg-blue-900/80 p-6 shadow-2xl shadow-blue-950/25 sm:p-8">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-amber-300/90">Campus Directory</p>
+          <h2 className="mt-2 text-3xl font-bold text-amber-100">Browse reported items</h2>
+          <p className="mt-3 max-w-2xl text-slate-200">
+            Search for misplaced items or browse recently found catalog entries across campus.
+          </p>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4 rounded-2xl border border-blue-800/70 bg-blue-950/70 p-5 sm:flex-row sm:items-center sm:justify-between">
+       
+        <div className="relative flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Search items or locations..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-full border border-blue-800 bg-blue-900/40 px-5 py-2.5 text-sm text-slate-100 placeholder-slate-400 outline-none transition focus:border-amber-300/60 focus:ring-1 focus:ring-amber-300/60"
+          />
+        </div>
+
+        
+        <div className="flex flex-wrap gap-2">
+          {['All', 'Found', 'Lost'].map((type) => (
+            <button
+              key={type}
+              onClick={() => setFilterType(type)}
+              className={`rounded-full px-5 py-2 text-sm font-semibold transition ${
+                filterType === type
+                  ? 'bg-amber-300 text-blue-950'
+                  : 'border border-blue-800 bg-blue-900/40 text-slate-300 hover:bg-blue-900/70 hover:text-slate-100'
+              }`}
+            >
+              {type} Items
+            </button>
+          ))}
+        </div>
+      </section>
+
+     
+      {filteredItems.length > 0 ? (
+        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {filteredItems.map((item) => (
+            <article
+              key={item.id}
+              className="flex flex-col justify-between rounded-2xl border border-blue-800/80 bg-blue-900/50 p-5 shadow-lg transition hover:border-blue-700"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-2">
+                  <span
+                    className={`rounded-full px-3 py-0.5 text-xs font-semibold ring-1 ${
+                      item.type === 'Found'
+                        ? 'bg-emerald-500/15 text-emerald-300 ring-emerald-500/20'
+                        : 'bg-rose-500/15 text-rose-300 ring-rose-500/20'
+                    }`}
+                  >
+                    {item.type}
+                  </span>
+                  <span className="text-xs text-slate-400">{item.date}</span>
+                </div>
+
+                <h4 className="mt-4 text-lg font-bold text-amber-100">{item.title}</h4>
+                <p className="mt-1 text-sm text-slate-300">
+                  <span className="font-medium text-slate-400">Location:</span> {item.location}
+                </p>
+              </div>
+
+              <div className="mt-5 pt-4 border-t border-blue-800/40">
+                <button className="w-full rounded-full border border-amber-300/30 bg-blue-950/60 py-2 text-sm font-semibold text-amber-200 transition hover:bg-amber-300 hover:text-blue-950">
+                  {item.type === 'Found' ? 'Claim item' : 'I found this'}
+                </button>
+              </div>
+            </article>
+          ))}
+        </section>
+      ) : (
+        
+        <section className="rounded-2xl border border-dashed border-blue-800/80 bg-blue-900/20 p-12 text-center">
+          <p className="text-lg font-semibold text-slate-300">No reported items match your criteria.</p>
+          <p className="mt-1 text-sm text-slate-400">Try adjusting your search filters or check back later.</p>
+        </section>
+      )}
     </main>
   )
 }

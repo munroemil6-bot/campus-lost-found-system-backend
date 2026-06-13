@@ -27,6 +27,11 @@ export default function Navbar() {
             Submit Item
           </a>
         </li>
+        <li>
+          <a className="rounded-full px-4 py-2 transition hover:bg-amber-300/15 hover:text-amber-100" href="/admin">
+            Admin
+          </a>
+        </li>
       </ul>
     </nav>
   )

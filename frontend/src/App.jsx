@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
+import AdminDashboard from './pages/AdminDashboard'
 import ItemCard from './components/ItemCard'
 import LoadingSpinner from './components/LoadingSpinner'
 import './index.css'
@@ -17,6 +18,7 @@ export default function App() {
             <Route path="/lost" element={<ItemCard />} />
             <Route path="/found" element={<ItemCard />} />
             <Route path="/submit" element={<ItemCard />} />
+            <Route path="/admin" element={<AdminDashboard />} />
           </Routes>
         </main>
 
