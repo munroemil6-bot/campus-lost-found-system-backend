@@ -74,25 +74,26 @@
 <body>
   <div class="container">
     <h1>Campus Lost & Found</h1>
-    <p>This root folder now includes a landing page for the Dockerized app. Start the services, then use the links below to open the frontend or backend API.</p>
+    <p>This repo uses Docker Compose to start the frontend and backend together.</p>
+    <p>When the services are running, you can open the frontend app directly at:</p>
+    <pre>http://localhost:3000</pre>
+
+    <p class="notice">
+      Redirecting you to the frontend now... If the app is not running, start it with:
+    </p>
+
+    <pre>docker compose up --build -d</pre>
 
     <div class="links">
       <a class="card" href="http://localhost:3000" target="_blank" rel="noreferrer">
-        Frontend app — http://localhost:3000
-      </a>
-      <a class="card" href="http://localhost:8000/docs" target="_blank" rel="noreferrer">
-        Backend API docs — http://localhost:8000/docs
+        Open frontend app
       </a>
       <a class="card" href="http://localhost:8000" target="_blank" rel="noreferrer">
-        Backend root API — http://localhost:8000
+        Open backend API root
       </a>
     </div>
-
-    <p>Run the app from the project root using Docker Compose:</p>
-    <pre>docker compose up --build</pre>
-
-    <div class="notice">
-      <strong>Note:</strong> The links work when the backend and frontend containers are running. If the frontend does not load, make sure the Docker app has started and you are using <code>http://localhost:3000</code>.</div>
   </div>
+</body>
+</html>
 </body>
 </html>
