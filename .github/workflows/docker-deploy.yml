@@ -16,6 +16,7 @@ env:
   BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-backend
   FRONTEND_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-frontend
   ROOT_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}-root
+  API_URL: http://localhost:8000
 
 jobs:
   build-and-push:
@@ -54,6 +55,8 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile.frontend
           push: true
+          build-args: |
+            VITE_API_BASE_URL=${{ env.API_URL }}
           tags: |
             ${{ env.FRONTEND_IMAGE }}:latest
             ${{ env.FRONTEND_IMAGE }}:${{ github.sha }}
