@@ -97,13 +97,18 @@ function getDefaultApiBaseUrl() {
   const protocol = window.location.protocol || 'http:'
   const hostname = window.location.hostname || 'localhost'
 
-  // Only default to localhost when running locally.
-  // On GitHub Pages or another public host, the backend must be configured explicitly.
+  // On GitHub Pages or public hosts, the backend must be configured explicitly.
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return `${protocol}//${hostname}:8000`
   }
 
-  return undefined
+  if (hostname.endsWith('.github.io') || hostname === 'github.io') {
+    return undefined
+  }
+
+  // When the app is accessed from another device on the same network,
+  // use the current host's IP or hostname with port 8000.
+  return `${protocol}//${hostname}:8000`
 }
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()

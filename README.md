@@ -241,9 +241,19 @@ Once both containers are running:
    http://localhost:3000
    ```
 
+   If you want to open the app from another device on the same network, use your computer's local IP address instead of `localhost`:
+   ```
+   http://<your-computer-ip>:3000
+   ```
+
 2. **Backend API**: Available at:
    ```
    http://localhost:8000
+   ```
+
+   From another device on the same network, use the same host IP:
+   ```
+   http://<your-computer-ip>:8000
    ```
 
 3. **API Documentation**: FastAPI automatically generates interactive docs:
