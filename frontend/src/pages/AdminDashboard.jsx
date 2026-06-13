@@ -1,9 +1,17 @@
+import { useEffect, useState } from 'react'
+import { fetchClaims } from '../services/api'
+import { getCurrentUser } from '../utils/auth'
+import { useNavigate } from 'react-router-dom'
 
 export default function AdminDashboard() {
-  
+  const navigate = useNavigate()
+  const [claims, setClaims] = useState([])
+  const [loading, setLoading] = useState(true)
+  const user = getCurrentUser()
+
   const stats = [
     { label: 'Open reports', value: '24' },
-    { label: 'Pending claims', value: '8' },
+    { label: 'Pending claims', value: String(claims.length) },
     { label: 'Matched items', value: '13' },
     { label: 'Resolved today', value: '5' },
   ]
@@ -29,13 +37,20 @@ export default function AdminDashboard() {
     },
   ]
 
-  const claims = [
-    { claimant: 'Amina K.', item: 'Blue backpack', confidence: 'High' },
-    { claimant: 'David M.', item: 'Calculator', confidence: 'Medium' },
-    { claimant: 'Joy W.', item: 'Keys with red tag', confidence: 'High' },
-  ]
+  useEffect(() => {
+    if (!user || !user.is_admin) {
+      navigate('/login')
+      return
+    }
 
-  
+    fetchClaims()
+      .then((data) => {
+        setClaims(data)
+      })
+      .catch(() => setClaims([]))
+      .finally(() => setLoading(false))
+  }, [navigate, user])
+
   function signOut() {
     localStorage.removeItem('clf_user')
     window.location.href = '/'
@@ -114,27 +129,29 @@ export default function AdminDashboard() {
         <aside className="rounded-3xl border border-blue-800/80 bg-blue-900/80 p-6">
           <h3 className="text-xl font-bold text-amber-100">Claim approvals</h3>
           <div className="mt-5 space-y-4">
-            {claims.map((claim) => (
-              <article key={`${claim.claimant}-${claim.item}`} className="rounded-2xl border border-blue-800/70 bg-blue-950/60 p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold text-slate-100">{claim.item}</p>
-                    <p className="mt-1 text-sm text-slate-300">Claimed by {claim.claimant}</p>
+            {loading ? (
+              <p className="text-sm text-slate-300">Loading claims...</p>
+            ) : claims.length === 0 ? (
+              <p className="text-sm text-slate-300">No claims submitted yet.</p>
+            ) : (
+              claims.map((claim) => (
+                <article key={claim.id} className="rounded-2xl border border-blue-800/70 bg-blue-950/60 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-slate-100">Item ID: {claim.item_id}</p>
+                      <p className="mt-1 text-sm text-slate-300">Claimed by: {claim.claimant_name || 'Unknown'}</p>
+                      <p className="mt-1 text-sm text-slate-300">Email: {claim.claimant_email || 'Unknown'}</p>
+                    </div>
+                    <span className="rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-amber-100">
+                      {claim.status || 'pending'}
+                    </span>
                   </div>
-                  <span className="rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-amber-100">
-                    {claim.confidence}
-                  </span>
-                </div>
-                <div className="mt-4 flex gap-2">
-                  <button className="flex-1 rounded-full bg-amber-300 px-4 py-2 text-sm font-semibold text-blue-950 transition hover:bg-amber-200">
-                    Approve
-                  </button>
-                  <button className="flex-1 rounded-full border border-blue-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:bg-blue-800/70">
-                    Review
-                  </button>
-                </div>
-              </article>
-            ))}
+                  <div className="mt-4 rounded-2xl bg-blue-900/60 p-3 text-sm text-slate-300">
+                    {claim.proof}
+                  </div>
+                </article>
+              ))
+            )}
           </div>
         </aside>
       </section>

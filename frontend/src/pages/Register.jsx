@@ -18,14 +18,19 @@ export default function Register() {
     setLoading(true)
 
     try {
-      const data = await registerUser({ username, email, password })
+      const payload = {
+        username: username.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+      }
+      const data = await registerUser(payload)
       setSuccess(data.message)
       setUsername('')
       setEmail('')
       setPassword('')
       setTimeout(() => navigate('/login'), 1600)
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Registration failed. Please try again.')
+      setError(err?.response?.data?.detail || err.message || 'Registration failed. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -66,7 +71,7 @@ export default function Register() {
             onChange={event => setEmail(event.target.value)}
             required
             className="w-full rounded-3xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
-            placeholder="your.email@gmail.com"
+            placeholder="yourname@gmail.com"
           />
         </div>
 

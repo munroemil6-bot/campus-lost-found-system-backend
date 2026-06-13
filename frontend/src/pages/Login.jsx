@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../services/api'
+import { setCurrentUser } from '../utils/auth'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -17,24 +18,26 @@ export default function Login() {
     setLoading(true)
 
     try {
-      const loginUsername = username
+      const loginUsername = username.trim()
+      const credential = loginUsername.includes('@') ? loginUsername.toLowerCase() : loginUsername
       const loginPassword = password
-      const data = await loginUser({ username: loginUsername, password: loginPassword })
+      const data = await loginUser({ username: credential, password: loginPassword })
       setSuccess(data.message)
-      // Save user locally for protected routes
-      import('../utils/auth').then(mod => {
-        const isAdmin = data.email === 'admin@gmail.com' && data.username === 'admin' && loginPassword === 'admin123'
-        const userObj = { user_id: data.user_id, email: data.email, username: data.username }
-        mod.setCurrentUser(userObj)
-        setTimeout(() => {
-          if (isAdmin) navigate('/admin')
-          else navigate('/student-dashboard')
-        }, 600)
-      })
+      const userObj = {
+        user_id: data.user_id,
+        email: data.email,
+        username: data.username,
+        is_admin: data.is_admin ?? false,
+      }
+      setCurrentUser(userObj)
+      setTimeout(() => {
+        if (data.is_admin) navigate('/admin')
+        else navigate('/student-dashboard')
+      }, 600)
       setUsername('')
       setPassword('')
     } catch (err) {
-      setError(err?.response?.data?.detail || 'Login failed. Check your username and password.')
+      setError(err?.response?.data?.detail || err.message || 'Login failed. Check your username and password.')
     } finally {
       setLoading(false)
     }
@@ -51,7 +54,7 @@ export default function Login() {
       <form className="mt-10 space-y-6" onSubmit={handleSubmit}>
         <div>
           <label className="mb-2 block text-sm font-semibold text-slate-200" htmlFor="username">
-            Username or Email
+            Email or Username
           </label>
           <input
             id="username"
@@ -60,8 +63,9 @@ export default function Login() {
             onChange={event => setUsername(event.target.value)}
             required
             className="w-full rounded-3xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/20"
-            placeholder="Enter your username or email"
+            placeholder="Enter your email or username"
           />
+
         </div>
 
         <div>

@@ -1,6 +1,17 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+function normalizeApiBaseUrl(url) {
+  if (!url) return url
+  return url
+    .replace('host.docker.internal', 'localhost')
+    .replace('http://backend:8000', 'http://localhost:8000')
+    .replace('https://backend:8000', 'https://localhost:8000')
+}
+
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL
+const normalizedBaseUrl = normalizeApiBaseUrl(rawBaseUrl)
+const BASE_URL = normalizedBaseUrl
+  || (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}:8000` : 'http://localhost:8000')
 
 export const api = axios.create({
   baseURL: BASE_URL,

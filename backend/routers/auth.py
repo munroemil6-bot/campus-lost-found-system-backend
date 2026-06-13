@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from schemas.user import UserCreate, UserLogin
@@ -13,8 +14,11 @@ router = APIRouter(
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 def register(user: UserCreate, db: Session = Depends(get_db)):
+    normalized_email = user.email.strip().lower()
+    normalized_username = user.username.strip()
+
     # 1. Check if the email is already taken
-    existing_email = db.query(User).filter(User.email == user.email).first()
+    existing_email = db.query(User).filter(func.lower(User.email) == normalized_email).first()
     if existing_email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -22,7 +26,7 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         )
 
     # 2. Check if the username is already taken
-    existing_username = db.query(User).filter(User.username == user.username).first()
+    existing_username = db.query(User).filter(func.lower(User.username) == normalized_username.lower()).first()
     if existing_username:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -31,10 +35,10 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
     # 3. Create and save the new user
     new_user = User(
-        username=user.username,
-        email=user.email,
+        username=normalized_username,
+        email=normalized_email,
         # NOTE: Passwords are raw text for now. You should add hashing later.
-        hashed_password=user.password 
+        hashed_password=user.password
     )
 
     db.add(new_user)
@@ -49,8 +53,16 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", status_code=status.HTTP_200_OK)
 def login(user: UserLogin, db: Session = Depends(get_db)):
-    # 1. Fetch user from database by username
-    db_user = db.query(User).filter(User.username == user.username).first()
+    credential = user.username.strip()
+    normalized_credential = credential.lower()
+
+    # 1. Fetch user from database by username or email (case-insensitive)
+    db_user = db.query(User).filter(
+        or_(
+            func.lower(User.username) == normalized_credential,
+            func.lower(User.email) == normalized_credential,
+        )
+    ).first()
 
     # 2. Verify user exists
     if not db_user:
@@ -67,9 +79,13 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
         )
 
     # 4. Return successful login payload
+    is_admin = db_user.email == 'admin@gmail.com' and db_user.username == 'admin'
+
     return {
         "message": f"Welcome back, {db_user.username}!",
         "user_id": db_user.id,
-        "email": db_user.email
+        "email": db_user.email,
+        "username": db_user.username,
+        "is_admin": is_admin,
     }
 
