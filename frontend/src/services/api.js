@@ -203,6 +203,18 @@ export async function fetchItems() {
 }
 
 export async function createItem(data) {
+  if (!BASE_URL) {
+    const fallbackItem = {
+      id: FALLBACK_ITEMS.length + 1,
+      ...data,
+    }
+    FALLBACK_ITEMS.push(fallbackItem)
+    if (typeof window !== 'undefined') {
+      try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'item_created', time: Date.now()})) } catch (e) {}
+    }
+    return fallbackItem
+  }
+
   const response = await api.post('/items', data)
   // emit a storage event for other tabs/components to react
   if (typeof window !== 'undefined') {
@@ -226,6 +238,16 @@ export async function fetchClaims() {
 }
 
 export async function createClaim(data) {
+  if (!BASE_URL) {
+    if (typeof window !== 'undefined') {
+      try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'claim_created', time: Date.now()})) } catch (e) {}
+    }
+    return {
+      message: 'Claim stored locally. Backend is not configured.',
+      ...data,
+    }
+  }
+
   const response = await api.post('/claims', data)
   if (typeof window !== 'undefined') {
     try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'claim_created', time: Date.now()})) } catch (e) {}
