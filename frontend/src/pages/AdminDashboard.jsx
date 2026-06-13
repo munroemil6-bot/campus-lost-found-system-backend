@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchClaims } from '../services/api'
+import { fetchClaims, fetchItems } from '../services/api'
 import { getCurrentUser } from '../utils/auth'
 import { useNavigate } from 'react-router-dom'
 
@@ -9,6 +9,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true)
   const user = getCurrentUser()
 
+  const [items, setItems] = useState([])
   const stats = [
     { label: 'Open reports', value: '24' },
     { label: 'Pending claims', value: String(claims.length) },
@@ -16,7 +17,7 @@ export default function AdminDashboard() {
     { label: 'Resolved today', value: '5' },
   ]
 
-  const reviewItems = [
+  const reviewItems = items.length > 0 ? items.map(it => ({ title: it.name || `Item ${it.id}`, type: it.item_type || 'Found', location: it.location || 'Unknown', status: 'Needs review' })) : [
     {
       title: 'Black laptop sleeve',
       type: 'Found',
@@ -43,12 +44,26 @@ export default function AdminDashboard() {
       return
     }
 
-    fetchClaims()
-      .then((data) => {
-        setClaims(data)
-      })
-      .catch(() => setClaims([]))
-      .finally(() => setLoading(false))
+    const load = async () => {
+      try {
+        const [c, its] = await Promise.all([fetchClaims(), fetchItems()])
+        setClaims(c || [])
+        setItems(its || [])
+      } catch (e) {
+        setClaims([])
+        setItems([])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    // refresh when other tabs/components trigger an action (create claim/item)
+    const onStorage = (e) => {
+      if (e.key === '__clf_last_action') load()
+    }
+
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [navigate, user])
 
   function signOut() {

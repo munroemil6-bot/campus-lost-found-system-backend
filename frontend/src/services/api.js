@@ -1,17 +1,23 @@
 import axios from 'axios'
 
 function normalizeApiBaseUrl(url) {
-  if (!url) return url
+  if (!url) return undefined
   return url
-    .replace('host.docker.internal', 'localhost')
-    .replace('http://backend:8000', 'http://localhost:8000')
-    .replace('https://backend:8000', 'https://localhost:8000')
+    .replace(/host\.docker\.internal/gi, 'localhost')
+    .replace(/https?:\/\/backend:8000/gi, 'http://localhost:8000')
+    .replace(/https?:\/\/localhost:8000/gi, match => match.startsWith('https') ? 'https://localhost:8000' : 'http://localhost:8000')
+}
+
+function getDefaultApiBaseUrl() {
+  if (typeof window === 'undefined') return 'http://localhost:8000'
+  const protocol = window.location.protocol || 'http:'
+  const hostname = window.location.hostname || 'localhost'
+  return `${protocol}//${hostname}:8000`
 }
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL
 const normalizedBaseUrl = normalizeApiBaseUrl(rawBaseUrl)
-const BASE_URL = normalizedBaseUrl
-  || (typeof window !== 'undefined' ? `${window.location.protocol}//${window.location.hostname}:8000` : 'http://localhost:8000')
+const BASE_URL = normalizedBaseUrl || getDefaultApiBaseUrl()
 
 export const api = axios.create({
   baseURL: BASE_URL,
@@ -46,6 +52,10 @@ export async function fetchItems() {
 
 export async function createItem(data) {
   const response = await api.post('/items', data)
+  // emit a storage event for other tabs/components to react
+  if (typeof window !== 'undefined') {
+    try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'item_created', time: Date.now()})) } catch (e) {}
+  }
   return response.data
 }
 
@@ -56,5 +66,8 @@ export async function fetchClaims() {
 
 export async function createClaim(data) {
   const response = await api.post('/claims', data)
+  if (typeof window !== 'undefined') {
+    try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'claim_created', time: Date.now()})) } catch (e) {}
+  }
   return response.data
 }

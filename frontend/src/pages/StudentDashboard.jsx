@@ -14,8 +14,7 @@ export default function StudentDashboard() {
       setLoading(false)
       return
     }
-
-    fetchClaims()
+    const load = () => fetchClaims()
       .then((data) => {
         // filter claims belonging to this user by claimant_email or user_id
         const my = data.filter(c => {
@@ -27,6 +26,14 @@ export default function StudentDashboard() {
       })
       .catch(() => setClaims([]))
       .finally(() => setLoading(false))
+
+    // refresh when other tabs/components trigger an action (create claim/item)
+    const onStorage = (e) => {
+      if (e.key === '__clf_last_action') load()
+    }
+
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
   }, [user])
 
   return (

@@ -33,7 +33,7 @@ export default function Login() {
       setTimeout(() => {
         if (data.is_admin) navigate('/admin')
         else navigate('/student-dashboard')
-      }, 600)
+      })
       setUsername('')
       setPassword('')
     } catch (err) {
