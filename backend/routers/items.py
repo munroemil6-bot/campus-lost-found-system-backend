@@ -5,12 +5,12 @@ from sqlalchemy.orm import Session
 
 from backend.routers.auth import get_db
 from backend.models.item import Item
-from backend.schemas.item import ItemService
+from backend.schemas.item import ItemCreate, ItemService
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
 @router.post("/")
-def create_item(item: Item, db: Session = Depends(get_db)):
+def create_item(item: ItemCreate, db: Session = Depends(get_db)):
     return ItemService.create_item(db, item)
 
 @router.get("/")

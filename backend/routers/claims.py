@@ -3,11 +3,16 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from routers.auth import get_db
-from schemas.item import ClaimService
+from backend.routers.auth import get_db
+from backend.schemas.claim import ClaimCreate, ClaimService
+from backend.models.claim import Claim
 
 router = APIRouter(prefix="/claims", tags=["Claims"])
 
 @router.post("/")
-def create_claim(user_id: int, item_id: int, proof: str, db: Session = Depends(get_db)):
-    return ClaimService.create_claim(db, user_id, item_id, proof)
+def create_claim(claim: ClaimCreate, db: Session = Depends(get_db)):
+    return ClaimService.create_claim(db, claim)
+
+@router.get("/")
+def get_claims(db: Session = Depends(get_db)):
+    return db.query(Claim).all()
