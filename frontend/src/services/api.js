@@ -30,6 +30,60 @@ const FALLBACK_ITEMS = [
   },
 ]
 
+const FALLBACK_USERS = [
+  {
+    user_id: 1,
+    username: 'admin',
+    email: 'admin@gmail.com',
+    password: 'admin123',
+    is_admin: true,
+  },
+  {
+    user_id: 2,
+    username: 'mykes',
+    email: 'mykkes@gmail.com',
+    password: 'myles123',
+    is_admin: false,
+  },
+  {
+    user_id: 3,
+    username: 'najib',
+    email: 'najib@gmail.com',
+    password: 'najib123',
+    is_admin: false,
+  },
+]
+
+const LOCAL_USERS_KEY = 'clf_local_users'
+
+function getStoredLocalUsers() {
+  if (typeof window === 'undefined') return FALLBACK_USERS
+  try {
+    const saved = localStorage.getItem(LOCAL_USERS_KEY)
+    return saved ? JSON.parse(saved) : FALLBACK_USERS
+  } catch (e) {
+    return FALLBACK_USERS
+  }
+}
+
+function saveLocalUsers(users) {
+  if (typeof window === 'undefined') return
+  try {
+    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users))
+  } catch (e) {
+    // ignore storage errors in browsers with strict privacy settings
+  }
+}
+
+function findLocalUser({ username, password }) {
+  const normalized = username.trim().toLowerCase()
+  return getStoredLocalUsers().find(user => {
+    const matchesUsername = user.username.toLowerCase() === normalized
+    const matchesEmail = user.email.toLowerCase() === normalized
+    return (matchesUsername || matchesEmail) && user.password === password
+  })
+}
+
 function normalizeApiBaseUrl(url) {
   if (!url) return undefined
   return url
@@ -79,11 +133,57 @@ if (typeof window !== 'undefined') {
 }
 
 export async function registerUser(data) {
+  if (!BASE_URL) {
+    const users = getStoredLocalUsers()
+    const normalizedEmail = data.email.trim().toLowerCase()
+    const normalizedUsername = data.username.trim().toLowerCase()
+
+    if (users.some(user => user.email.toLowerCase() === normalizedEmail)) {
+      throw new Error('Email is already registered')
+    }
+
+    if (users.some(user => user.username.toLowerCase() === normalizedUsername)) {
+      throw new Error('Username is already taken')
+    }
+
+    const newUser = {
+      user_id: users.length + 1,
+      username: data.username.trim(),
+      email: normalizedEmail,
+      password: data.password,
+      is_admin: false,
+    }
+    const updatedUsers = [...users, newUser]
+    saveLocalUsers(updatedUsers)
+
+    return {
+      message: 'User registered successfully',
+      user_id: newUser.user_id,
+    }
+  }
+
   const response = await api.post('/auth/register', data)
   return response.data
 }
 
 export async function loginUser(data) {
+  if (!BASE_URL) {
+    const user = findLocalUser(data)
+    if (!user) {
+      const error = new Error('Invalid username or password')
+      error.response = { data: { detail: 'Invalid username or password' } }
+      throw error
+    }
+
+    return {
+      message: `Welcome back, ${user.username}!`,
+      user_id: user.user_id,
+      email: user.email,
+      username: user.username,
+      is_admin: user.is_admin,
+    }
+  }
+
   const response = await api.post('/auth/login', data)
   return response.data
 }
