@@ -53,3 +53,8 @@ jobs:
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v5
+
+      - name: Print deployed GitHub Pages URL
+        run: |
+          echo "GitHub Pages frontend should be available at:"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"

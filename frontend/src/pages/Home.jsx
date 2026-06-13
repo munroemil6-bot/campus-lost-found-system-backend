@@ -5,6 +5,8 @@ import { fetchItems } from '../services/api'
 export default function Home() {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
+  const [backendReachable, setBackendReachable] = useState(null)
+  const apiBaseUrl = typeof window !== 'undefined' ? window.__CLF_API_BASE : undefined
 
   useEffect(() => {
     const load = async () => {
@@ -12,8 +14,10 @@ export default function Home() {
       try {
         const data = await fetchItems()
         setItems(data || [])
+        setBackendReachable(typeof window !== 'undefined' ? window.__CLF_BACKEND_REACHABLE ?? false : false)
       } catch (err) {
         setItems([])
+        setBackendReachable(false)
       } finally {
         setLoading(false)
       }
@@ -45,6 +49,21 @@ export default function Home() {
           <p className="mt-6 text-lg leading-8 text-slate-200">
             A central space for students and staff to report, browse, and claim lost or found items on campus with confidence. Keep our community connected.
           </p>
+          <div className="mt-6 rounded-3xl border border-blue-800/60 bg-blue-950/80 p-5 text-sm text-slate-300">
+            <p className="font-semibold text-slate-100">Backend connection</p>
+            <p className="mt-2 text-slate-300">
+              {backendReachable === null
+                ? 'Checking backend connection…'
+                : backendReachable
+                ? 'Connected to backend'
+                : 'Unable to reach backend'}
+            </p>
+            {apiBaseUrl ? (
+              <p className="mt-2 text-sm text-emerald-300">API base URL: {apiBaseUrl}</p>
+            ) : (
+              <p className="mt-2 text-sm text-rose-300">Backend API URL is not configured.</p>
+            )}
+          </div>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-amber-300 px-6 py-3 text-sm font-semibold text-blue-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-200">
               Report an item

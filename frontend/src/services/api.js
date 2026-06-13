@@ -196,13 +196,22 @@ export async function loginUser(data) {
 
 export async function fetchItems() {
   if (!BASE_URL) {
+    if (typeof window !== 'undefined') {
+      window.__CLF_BACKEND_REACHABLE = false
+    }
     return FALLBACK_ITEMS
   }
 
   try {
     const response = await api.get('/items')
+    if (typeof window !== 'undefined') {
+      window.__CLF_BACKEND_REACHABLE = true
+    }
     return response.data
   } catch (err) {
+    if (typeof window !== 'undefined') {
+      window.__CLF_BACKEND_REACHABLE = false
+    }
     console.warn('Unable to fetch items from backend, showing fallback items.', err)
     return FALLBACK_ITEMS
   }
