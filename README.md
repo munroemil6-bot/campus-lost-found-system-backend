@@ -69,16 +69,57 @@ The backend is implemented in FastAPI and lives under the `backend/` folder.
 ### Key Backend Files
 
 - `backend/main.py` — FastAPI app entrypoint with CORS middleware
-- `backend/database.py` — SQLAlchemy engine, session, and base model
 - `backend/models/` — SQLAlchemy models for users, items, and claims
 - `backend/routers/auth.py` — Authentication routes (register, login)
-- `backend/routers/items.py` — Item management routes
-- `backend/routers/claims.py` — Claims management routes
-- `backend/schemas/` — Pydantic request/response models
-- `backend/requirements.txt` — Python dependencies
 
-### Prerequisites
+## Frontend: How it works and how to access from a link
 
+**Overview**
+
+- The frontend is a Vite + React app located in the `frontend/` folder. It provides the public UI (Home, Browse, Report Lost/Found), and authentication pages (Login, Register). The authenticated views are `StudentDashboard` and `AdminDashboard`.
+- Routing is handled by React Router in `frontend/src/App.jsx`. Key routes:
+   - `/` — Home
+   - `/login` — Login form
+   - `/register` — Registration form
+   - `/browse` — Browse reported items
+   - `/report/lost` and `/report/found` — report item forms
+   - `/student-dashboard` — student landing page (shows user's claims inline)
+   - `/admin` — admin dashboard (requires admin user)
+
+**API integration**
+
+- API client is `frontend/src/services/api.js`. It reads `VITE_API_BASE_URL` at build/runtime and normalizes hostnames so the app works on Linux (replacing `host.docker.internal` with `localhost`). It sets `window.__CLF_API_BASE` in the browser for debugging.
+- Authentication flow: `Login.jsx` sends `{ username, password }` to `POST /auth/login`. The app accepts either username or email (case-insensitive). On success, the returned user object is stored in `localStorage` under the key `clf_user` (no expiry) so the session persists until sign-out.
+
+**Accessing the running frontend from a link**
+
+If you run the frontend locally (dev server) it listens on `http://localhost:3000`. You can provide a direct link to testers like:
+
+```
+http://localhost:3000
+```
+
+When running in Docker, expose port `3000` and set `VITE_API_BASE_URL` to your backend address (default in `docker-compose.yml` is `http://localhost:8000`). Example run command from README sections:
+
+```bash
+sudo docker run -p 3000:3000 -d --name campus-frontend-container -e VITE_API_BASE_URL=http://localhost:8000 campus-frontend
+```
+
+If testers are on the same machine, `http://localhost:3000` will load the frontend. If you need to share to other machines on your LAN, run Vite with `--host` and use the host machine's IP address:
+
+```bash
+# start dev server
+cd frontend
+npm run dev -- --host
+
+# if your host IP is 192.168.1.50, the link becomes
+http://192.168.1.50:3000
+```
+
+**Troubleshooting**
+
+- If login attempts fail from the browser but `curl` to the API works, ensure the frontend dev server was restarted after code changes (so `api.js` normalization is applied).
+- If you see requests to `host.docker.internal:8000` on Linux, restart the frontend dev server or use the Docker run example with `VITE_API_BASE_URL=http://localhost:8000`.
 - Python 3.12 (recommended)
 - `pip` for Python package installation
 - `docker` if using containers

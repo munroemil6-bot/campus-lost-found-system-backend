@@ -20,6 +20,15 @@ export const api = axios.create({
   },
 })
 
+// expose the resolved API base URL in the browser for debugging
+if (typeof window !== 'undefined') {
+  try {
+    window.__CLF_API_BASE = BASE_URL
+  } catch (e) {
+    /* ignore */
+  }
+}
+
 export async function registerUser(data) {
   const response = await api.post('/auth/register', data)
   return response.data
