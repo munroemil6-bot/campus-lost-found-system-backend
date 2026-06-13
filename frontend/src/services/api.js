@@ -1,11 +1,20 @@
 import axios from 'axios'
 
-// Axios instance for frontend API calls to the backend.
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+
 export const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 })
 
-// Add API helpers for authentication, items, and claims here.
+export async function registerUser(data) {
+  const response = await api.post('/auth/register', data)
+  return response.data
+}
+
+export async function loginUser(data) {
+  const response = await api.post('/auth/login', data)
+  return response.data
+}

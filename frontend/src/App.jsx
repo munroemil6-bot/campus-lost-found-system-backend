@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './pages/Home'
 import AdminDashboard from './pages/AdminDashboard'
+import Login from './pages/Login'
+import Register from './pages/Register'
 import ItemCard from './components/ItemCard'
 import LoadingSpinner from './components/LoadingSpinner'
 import './index.css'
@@ -15,6 +17,8 @@ export default function App() {
         <main className="px-4 py-6 sm:px-6 lg:px-8">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/lost" element={<ItemCard />} />
             <Route path="/found" element={<ItemCard />} />
             <Route path="/submit" element={<ItemCard />} />
