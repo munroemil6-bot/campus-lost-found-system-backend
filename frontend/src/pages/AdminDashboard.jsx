@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchClaims, fetchItems } from '../services/api'
+import { fetchClaims, fetchItems, updateClaimStatus } from '../services/api'
 import { getCurrentUser } from '../utils/auth'
 import { useNavigate } from 'react-router-dom'
 import { navigateToRoute } from '../utils/navigation'
@@ -155,9 +155,19 @@ export default function AdminDashboard() {
                       <p className="mt-1 text-sm text-slate-300">Claimed by: {claim.claimant_name || 'Unknown'}</p>
                       <p className="mt-1 text-sm text-slate-300">Email: {claim.claimant_email || 'Unknown'}</p>
                     </div>
-                    <span className="rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-amber-100">
-                      {claim.status || 'pending'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-amber-100">
+                        {claim.status || 'pending'}
+                      </span>
+                      <div className="flex gap-2">
+                        <button onClick={async () => {
+                          await updateClaimStatus(claim.id, 'Resolved')
+                        }} className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white">Resolve</button>
+                        <button onClick={async () => {
+                          await updateClaimStatus(claim.id, 'Rejected')
+                        }} className="rounded-full bg-rose-600 px-3 py-1 text-xs font-semibold text-white">Reject</button>
+                      </div>
+                    </div>
                   </div>
                   <div className="mt-4 rounded-2xl bg-blue-900/60 p-3 text-sm text-slate-300">
                     {claim.proof}

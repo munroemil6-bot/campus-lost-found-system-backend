@@ -252,6 +252,24 @@ export async function fetchClaims() {
   }
 }
 
+export async function updateClaimStatus(claimId, status) {
+  if (!BASE_URL) {
+    return null
+  }
+
+  try {
+    const response = await api.patch(`/claims/${claimId}`, { status })
+    // notify other tabs/components
+    if (typeof window !== 'undefined') {
+      try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'claim_updated', time: Date.now()})) } catch (e) {}
+    }
+    return response.data
+  } catch (err) {
+    console.warn('Unable to update claim status.', err)
+    return null
+  }
+}
+
 export async function createClaim(data) {
   if (!BASE_URL) {
     if (typeof window !== 'undefined') {

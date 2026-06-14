@@ -12,6 +12,10 @@ class ClaimCreate(BaseModel):
     claimant_name: str | None = None
     claimant_email: str | None = None
 
+
+class ClaimUpdate(BaseModel):
+    status: str | None = None
+
 class ClaimService:
 
     @staticmethod
@@ -31,3 +35,15 @@ class ClaimService:
         db.commit()
         db.refresh(new_claim)
         return new_claim
+
+    @staticmethod
+    def update_claim(db: Session, claim_id: int, update: ClaimUpdate):
+        claim = db.query(ClaimModel).filter(ClaimModel.id == claim_id).first()
+        if not claim:
+            return None
+        if update.status is not None:
+            claim.status = update.status
+        db.add(claim)
+        db.commit()
+        db.refresh(claim)
+        return claim
