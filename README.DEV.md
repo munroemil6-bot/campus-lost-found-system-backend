@@ -5,8 +5,7 @@ Prefer running the app with Docker Compose. If Docker isn't available, run the b
 Docker (recommended):
 
 ```bash
-# bring up backend and frontend
-./scripts/start.sh
+docker compose up --build -d
 ```
 
 Local (no Docker):
@@ -25,8 +24,4 @@ npm ci
 npm run dev -- --host
 ```
 
-After services start, run the checks:
-
-```bash
-bash scripts/check_endpoints.sh
-```
+After services start, you can verify the backend with curl or Postman against `http://localhost:8000`.
