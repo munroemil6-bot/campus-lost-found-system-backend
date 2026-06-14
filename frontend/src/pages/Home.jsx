@@ -49,6 +49,7 @@ export default function Home() {
           <p className="mt-6 text-lg leading-8 text-slate-200">
             A central space for students and staff to report, browse, and claim lost or found items on campus with confidence. Keep our community connected.
           </p>
+          
           <div className="mt-10 flex flex-wrap gap-4">
             <Link to="/login" className="inline-flex items-center justify-center rounded-full bg-amber-300 px-6 py-3 text-sm font-semibold text-blue-950 shadow-lg shadow-amber-500/20 transition hover:bg-amber-200">
               Report an item

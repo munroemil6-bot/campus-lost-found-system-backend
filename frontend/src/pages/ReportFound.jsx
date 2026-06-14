@@ -32,20 +32,23 @@ export default function ReportFound() {
       return
     }
 
-    try {
-      await createItem({
-        name: formData.name,
-        category: formData.category,
-        description: formData.description,
-        location: formData.location,
-        item_type: 'found',
-      })
-      setSuccessMessage('Found item reported successfully.')
-      setIsSubmitted(true)
-      setTimeout(() => navigate('/browse'))
-    } catch (err) {
-      setErrorMessage(err?.response?.data?.detail || 'Unable to submit the report.')
-    }
+      try {
+        const resp = await createItem({
+          name: formData.name,
+          category: formData.category,
+          description: formData.description,
+          location: formData.location,
+          item_type: 'found',
+        })
+        setSuccessMessage('Found item reported successfully.')
+        setIsSubmitted(true)
+        // wait for user to click Browse or Report another; optionally navigate automatically when response contains id
+        if (resp && resp.id) {
+          navigate('/browse')
+        }
+      } catch (err) {
+        setErrorMessage(err?.response?.data?.detail || 'Unable to submit the report.')
+      }
   }
 
   return (

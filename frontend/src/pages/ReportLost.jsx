@@ -32,7 +32,7 @@ export default function ReportLost() {
     }
 
     try {
-      await createItem({
+      const resp = await createItem({
         name: formData.name,
         category: formData.category,
         description: formData.description,
@@ -41,7 +41,9 @@ export default function ReportLost() {
       })
       setSuccessMessage('Missing item reported successfully.')
       setIsSubmitted(true)
-      setTimeout(() => navigate('/browse'))
+      if (resp && resp.id) {
+        navigate('/browse')
+      }
     } catch (err) {
       setErrorMessage(err?.response?.data?.detail || 'Unable to submit the report.')
     }
