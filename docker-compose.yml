@@ -8,7 +8,7 @@ services:
     ports:
       - '8000:8000'
     volumes:
-      - ./backend:/app/backend
+      - ./backend:/app
     environment:
       - PYTHONUNBUFFERED=1
 
@@ -18,5 +18,11 @@ services:
       dockerfile: Dockerfile.frontend
     ports:
       - '3000:3000'
+    depends_on:
+      - backend
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+      # For LAN access from another device, replace localhost with the host machine IP:
+      # - VITE_API_BASE_URL=http://192.168.1.100:8000
     volumes:
-      - ./frontend:/app/frontend
+      - ./frontend:/app

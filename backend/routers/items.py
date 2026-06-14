@@ -3,9 +3,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from backend.routers.auth import get_db
-from backend.models.item import Item
-from backend.schemas.item import ItemCreate, ItemService
+from database import get_db
+from models.item import Item
+from schemas.item import ItemCreate, ItemService
 
 router = APIRouter(prefix="/items", tags=["Items"])
 
@@ -24,3 +24,11 @@ def get_lost_items(db: Session = Depends(get_db)):
 @router.get("/found")
 def get_found_items(db: Session = Depends(get_db)):
     return ItemService.get_items_by_type(db, "found")
+
+
+@router.delete("/{item_id}")
+def delete_item(item_id: int, db: Session = Depends(get_db)):
+    result = ItemService.delete_item(db, item_id)
+    if result is None:
+        return {"detail": "Not found"}
+    return result

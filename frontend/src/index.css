@@ -3,7 +3,7 @@
 /* Global application styles. */
 @layer base {
   :root {
-    color-scheme: light;
+    color-scheme: dark;
   }
 
   html {
@@ -11,15 +11,29 @@
   }
 
   body {
-    @apply min-h-screen bg-slate-50 text-slate-900 antialiased;
+    @apply min-h-screen bg-linear-to-br from-blue-950 via-blue-900 to-slate-950 text-slate-100 antialiased;
     margin: 0;
+    background-color: #020617;
   }
 
   #root {
     min-height: 100%;
   }
+
+  a {
+    @apply text-amber-200 no-underline transition hover:text-amber-100;
+  }
+
+  button {
+    @apply cursor-pointer;
+  }
 }
 
-button {
-  @apply cursor-pointer;
+.btn-gold {
+  @apply rounded-full bg-amber-300 px-5 py-2 font-semibold text-blue-950 transition hover:bg-amber-200;
 }
+
+.sr-only {
+  @apply sr-only;
+}
+
