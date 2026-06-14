@@ -41,7 +41,7 @@ export default function ReportLost() {
       })
       setSuccessMessage('Missing item reported successfully.')
       setIsSubmitted(true)
-      setTimeout(() => navigate('/browse'), 1200)
+      setTimeout(() => navigate('/browse'))
     } catch (err) {
       setErrorMessage(err?.response?.data?.detail || 'Unable to submit the report.')
     }
