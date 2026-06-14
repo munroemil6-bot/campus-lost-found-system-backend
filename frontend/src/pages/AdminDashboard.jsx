@@ -16,8 +16,6 @@ export default function AdminDashboard() {
 
   const getItemForClaim = (itemId) => items.find((item) => item.id === itemId)
 
-  const getItemForClaim = (itemId) => items.find((item) => item.id === itemId)
-
   const stats = [
     { label: 'Open reports', value: String(items.length) },
     { label: 'Pending claims', value: String(pendingClaims.length) },
