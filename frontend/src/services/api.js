@@ -238,6 +238,23 @@ export async function createItem(data) {
   return response.data
 }
 
+export async function deleteItem(itemId) {
+  if (!BASE_URL) {
+    return null
+  }
+
+  try {
+    const response = await api.delete(`/items/${itemId}`)
+    if (typeof window !== 'undefined') {
+      try { localStorage.setItem('__clf_last_action', JSON.stringify({type: 'item_deleted', time: Date.now()})) } catch (e) {}
+    }
+    return response.data
+  } catch (err) {
+    console.warn('Unable to delete item.', err)
+    return null
+  }
+}
+
 export async function fetchClaims() {
   if (!BASE_URL) {
     if (typeof window !== 'undefined') {

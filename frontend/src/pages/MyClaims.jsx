@@ -39,8 +39,18 @@ export default function MyClaims() {
       if (e.key === '__clf_last_action') loadClaims()
     }
 
+    let interval = null
+    const startPolling = () => {
+      loadClaims()
+      interval = setInterval(loadClaims, 10000)
+    }
+
     window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    startPolling()
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      if (interval) clearInterval(interval)
+    }
   }, [user])
 
   return (

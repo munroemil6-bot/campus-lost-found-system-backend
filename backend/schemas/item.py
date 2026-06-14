@@ -34,3 +34,12 @@ class ItemService:
     @staticmethod
     def get_items_by_type(db, item_type):
         return db.query(ItemModel).filter(ItemModel.item_type == item_type).all()
+
+    @staticmethod
+    def delete_item(db: Session, item_id: int):
+        item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
+        if not item:
+            return None
+        db.delete(item)
+        db.commit()
+        return {"deleted": item_id}

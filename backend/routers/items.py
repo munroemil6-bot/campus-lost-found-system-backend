@@ -24,3 +24,11 @@ def get_lost_items(db: Session = Depends(get_db)):
 @router.get("/found")
 def get_found_items(db: Session = Depends(get_db)):
     return ItemService.get_items_by_type(db, "found")
+
+
+@router.delete("/{item_id}")
+def delete_item(item_id: int, db: Session = Depends(get_db)):
+    result = ItemService.delete_item(db, item_id)
+    if result is None:
+        return {"detail": "Not found"}
+    return result

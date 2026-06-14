@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchClaims, fetchItems, updateClaimStatus } from '../services/api'
+import { fetchClaims, fetchItems, updateClaimStatus, deleteItem } from '../services/api'
 import { getCurrentUser } from '../utils/auth'
 import { useNavigate } from 'react-router-dom'
 import { navigateToRoute } from '../utils/navigation'
@@ -177,6 +177,11 @@ export default function AdminDashboard() {
                         <button onClick={async () => {
                           await updateClaimStatus(claim.id, 'Rejected')
                         }} className="rounded-full bg-rose-600 px-3 py-1 text-xs font-semibold text-white">Reject</button>
+                        <button onClick={async () => {
+                          // attempt to delete the associated item if present
+                          if (!claim.item_id) return
+                          await deleteItem(claim.item_id)
+                        }} className="rounded-full bg-gray-600 px-3 py-1 text-xs font-semibold text-white">Delete Item</button>
                       </div>
                     </div>
                   </div>
