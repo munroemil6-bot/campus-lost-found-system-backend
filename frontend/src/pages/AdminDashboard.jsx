@@ -66,8 +66,19 @@ export default function AdminDashboard() {
       if (e.key === '__clf_last_action') load()
     }
 
+    // also poll periodically for live updates
+    let interval = null
+    const startPolling = () => {
+      load()
+      interval = setInterval(load, 10000)
+    }
+
     window.addEventListener('storage', onStorage)
-    return () => window.removeEventListener('storage', onStorage)
+    startPolling()
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      if (interval) clearInterval(interval)
+    }
   }, [navigate, user])
 
   function signOut() {

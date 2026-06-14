@@ -240,13 +240,22 @@ export async function createItem(data) {
 
 export async function fetchClaims() {
   if (!BASE_URL) {
+    if (typeof window !== 'undefined') {
+      window.__CLF_BACKEND_REACHABLE = false
+    }
     return []
   }
 
   try {
     const response = await api.get('/claims')
+    if (typeof window !== 'undefined') {
+      window.__CLF_BACKEND_REACHABLE = true
+    }
     return response.data
   } catch (err) {
+    if (typeof window !== 'undefined') {
+      window.__CLF_BACKEND_REACHABLE = false
+    }
     console.warn('Unable to fetch claims from backend.', err)
     return []
   }
