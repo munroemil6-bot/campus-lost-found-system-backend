@@ -14,6 +14,10 @@ export default function AdminDashboard() {
   const resolvedClaims = claims.filter((c) => (c.status || '').toLowerCase() === 'resolved')
   const pendingClaims = claims.filter((c) => (c.status || '').toLowerCase() !== 'resolved')
 
+  const getItemForClaim = (itemId) => items.find((item) => item.id === itemId)
+
+  const getItemForClaim = (itemId) => items.find((item) => item.id === itemId)
+
   const stats = [
     { label: 'Open reports', value: String(items.length) },
     { label: 'Pending claims', value: String(pendingClaims.length) },
@@ -165,6 +169,15 @@ export default function AdminDashboard() {
                       <p className="font-semibold text-slate-100">Item ID: {claim.item_id}</p>
                       <p className="mt-1 text-sm text-slate-300">Claimed by: {claim.claimant_name || 'Unknown'}</p>
                       <p className="mt-1 text-sm text-slate-300">Email: {claim.claimant_email || 'Unknown'}</p>
+                      {getItemForClaim(claim.item_id) ? (
+                        <div className="mt-3 rounded-2xl bg-slate-950/70 p-3">
+                          <p className="text-sm font-semibold text-slate-100">Claimed item details</p>
+                          <p className="mt-2 text-sm text-slate-300">Name: {getItemForClaim(claim.item_id).name}</p>
+                          <p className="mt-1 text-sm text-slate-300">Type: {getItemForClaim(claim.item_id).item_type}</p>
+                          <p className="mt-1 text-sm text-slate-300">Location: {getItemForClaim(claim.item_id).location || 'Unknown'}</p>
+                          <p className="mt-1 text-sm text-slate-300">Category: {getItemForClaim(claim.item_id).category || 'N/A'}</p>
+                        </div>
+                      ) : null}
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="rounded-full bg-blue-800 px-3 py-1 text-xs font-semibold text-amber-100">
@@ -178,7 +191,6 @@ export default function AdminDashboard() {
                           await updateClaimStatus(claim.id, 'Rejected')
                         }} className="rounded-full bg-rose-600 px-3 py-1 text-xs font-semibold text-white">Reject</button>
                         <button onClick={async () => {
-                          // attempt to delete the associated item if present
                           if (!claim.item_id) return
                           await deleteItem(claim.item_id)
                         }} className="rounded-full bg-gray-600 px-3 py-1 text-xs font-semibold text-white">Delete Item</button>
