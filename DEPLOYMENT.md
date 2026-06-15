@@ -1,38 +1,78 @@
-Railway (backend) + Vercel (frontend) deployment guide
+Render (backend) + Vercel (frontend) deployment guide
 
-Step 1 — Deploy backend to Railway
+Step 1 — Prepare backend for Render
 
-1. Prepare your code
-   - Ensure `backend/main.py` reads port from environment via `PORT` (uvicorn uses `--port ${PORT:-8000}` in `Procfile`).
-   - CORS is already enabled in `main.py` via `CORSMiddleware` (the code currently allows `*`).
+1. Ensure `backend` is ready
+   - `backend/Procfile` exists (this repo has `Procfile` with `uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}`).
+   - `requirements.txt` lists runtime deps (`fastapi`, `uvicorn[standard]`, etc.).
+   - CORS is configurable via the `ALLOWED_ORIGINS` env var in `backend/main.py` (set to your Vercel domain).
 
-2. Create Railway project
-   - Sign in to Railway (https://railway.app), click `New Project` > `Deploy from GitHub`.
-   - Select the repository and the `backend` folder as the service root if Railway asks.
+2. Recommended files
+   - Optional: `runtime.txt` to pin Python version (example: `python-3.11.4`).
 
-3. Configure Environment Variables
-   - Add any secrets (e.g. `DATABASE_URL`, `JWT_SECRET`) under the Railway service’s `Variables` tab.
+Step 2 — Deploy backend to Render
 
-4. Start the deployment
-   - Railway will detect `Procfile` and use `uvicorn` to run the app.
-   - After deployment, go to `Settings` > `Networking` and `Generate Domain`. Copy the public URL for the backend (e.g. `https://your-backend.up.railway.app`).
+1. Create a new Web Service on Render
+   - Go to https://render.com -> New -> Web Service -> Connect GitHub and select this repository.
+   - Set the `Root Directory` to `backend` (or the repo root if Render auto-detects).
 
-Step 2 — Deploy frontend to Vercel
+2. Build & Start commands
+   - Build Command: `pip install -r requirements.txt`
+   - Start Command (choose one):
+     - Simple: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+     - Production (recommended): `gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --workers 4` (add `gunicorn` to `requirements.txt` if using this)
 
-1. Import the frontend project
-   - Sign into Vercel and create a new project. Select the same GitHub repository and choose the `frontend` directory when asked.
-
-2. Configure build settings
-   - Build Command: `npm ci && npm run build`
-   - Output Directory: `dist` or `frontend/dist` as required by the UI
-
-3. Environment variables
-   - Add `VITE_API_BASE_URL` (or `FRONTEND_API_URL`) with the value of your Railway public URL.
+3. Environment variables (Render service > Environment)
+   - `ALLOWED_ORIGINS` = your Vercel frontend URL (example: `https://your-frontend.vercel.app`)
+   - `DATABASE_URL`, `JWT_SECRET`, etc., as required by your app.
 
 4. Deploy
-   - Click deploy; Vercel will build and publish your frontend.
+   - Click `Create Web Service` / `Deploy` and wait for Render to build and start the service.
+   - Copy the public URL Render provides (for example: `https://your-backend.onrender.com`).
 
-Notes & Troubleshooting
+Step 3 — Deploy frontend to Vercel and link to Render backend
 
-- If Vercel builds but the frontend cannot reach the backend, ensure CORS is correctly configured on Railway backend (server should accept requests from the Vercel domain).
-- If you prefer `/_/backend` route convention, configure rewrites in Vercel or update `getDefaultApiBaseUrl()` to point to the Railway URL.
+1. Create Vercel Project
+   - In Vercel, import the same GitHub repository and select the `frontend` directory for the project.
+
+2. Build settings
+   - Build Command: `npm ci && npm run build`
+   - Output Directory: `dist`
+
+3. Environment variables (Vercel Project Settings)
+   - `VITE_API_BASE_URL` (or `FRONTEND_API_URL`) = the Render backend URL (e.g., `https://your-backend.onrender.com`)
+
+4. Deploy
+   - Deploy the Vercel project. After build, Vercel will publish your frontend.
+
+Step 4 — Verify and test
+
+1. Confirm CORS
+   - Ensure `ALLOWED_ORIGINS` on Render includes your Vercel deployment domain.
+
+2. Test login and API calls
+   - Open the Vercel URL and test login/register. If requests fail, open browser devtools and inspect network requests to the backend URL.
+
+Quick troubleshooting
+
+- If API calls return CORS errors: update `ALLOWED_ORIGINS` on Render to include the exact Vercel domain (with `https://`).
+- If the frontend still points to the wrong backend: confirm `VITE_API_BASE_URL` is set in Vercel and that `frontend/src/services/api.js` reads it (it does in this repo).
+
+Useful local commands
+
+```bash
+# Run backend locally
+pip install -r backend/requirements.txt
+cd backend
+uvicorn main:app --reload --port 8000
+
+# Run frontend locally
+cd frontend
+npm ci
+npm run dev -- --host
+```
+
+If you want I can:
+- create `runtime.txt` with a pinned Python version, and
+- add `gunicorn` to `backend/requirements.txt` and push those changes.
+
