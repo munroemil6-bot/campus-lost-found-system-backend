@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 from database import Base, engine, SessionLocal
 from models.user import User
@@ -134,9 +135,19 @@ def seed_demo_data():
     finally:
         db.close()
 
+# Configure allowed CORS origins via the ALLOWED_ORIGINS environment variable.
+# If ALLOWED_ORIGINS is not set, default to permissive CORS for easier testing.
+allowed_origins_env = os.getenv("ALLOWED_ORIGINS")
+if allowed_origins_env:
+    allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+else:
+    allowed_origins = ["*"]
+
+print(f"Allowed CORS origins: {allowed_origins}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
