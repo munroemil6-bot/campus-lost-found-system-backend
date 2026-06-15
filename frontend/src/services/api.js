@@ -100,7 +100,6 @@ function getDefaultApiBaseUrl() {
   if (typeof window === 'undefined') return 'http://localhost:8000'
   const protocol = window.location.protocol || 'http:'
   const hostname = window.location.hostname || 'localhost'
-  const origin = window.location.origin || `${protocol}//${hostname}`
 
   if (hostname === 'localhost' || hostname === '127.0.0.1') {
     return `${protocol}//${hostname}:8000`
@@ -110,7 +109,7 @@ function getDefaultApiBaseUrl() {
     return `${protocol}//${hostname}:8000`
   }
 
-  return `${origin}/_/backend`
+  return '/api'
 }
 
 const rawBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim()
