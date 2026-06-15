@@ -113,9 +113,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(items.router)
-app.include_router(claims.router)
+app.include_router(auth.router, prefix="/api")
+app.include_router(items.router, prefix="/api")
+app.include_router(claims.router, prefix="/api")
 
 @app.get("/")
 def home():

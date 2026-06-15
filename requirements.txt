@@ -1,8 +1,12 @@
-# Root requirements file pointing to the backend dependencies.
-# For development, use: pip install -r backend/requirements.txt
+# Root requirements file used by Vercel for the Python serverless backend.
+# Keep runtime backend requirements only; test dependencies stay in backend/requirements.txt.
 
 fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic
+email-validator
 python-multipart
+passlib[bcrypt]
+python-jose[cryptography]
+psycopg2-binary
