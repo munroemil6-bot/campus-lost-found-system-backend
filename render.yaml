@@ -3,7 +3,7 @@ services:
     name: campus-lost-found-backend
     runtime: python
     pythonVersion: "3.11"
-    startCommand: "gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 0.0.0.0:$PORT --workers 4"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT --workers 4"
     buildCommand: "pip install -r backend/requirements.txt"
     rootDir: "backend"
     
