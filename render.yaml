@@ -3,10 +3,10 @@ services:
     name: campus-lost-found-backend
     runtime: python
     pythonVersion: "3.14"
-    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT --workers 4"
-    buildCommand: "pip install -r backend/requirements.txt"
-    rootDir: "backend"
-    
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 4"
+    rootDir: "."
+
     envVars:
       - key: DATABASE_URL
         scope: RENDER_INSTANCE_ID
