@@ -2,7 +2,7 @@ services:
   - type: web
     name: campus-lost-found-backend
     runtime: python
-    pythonVersion: "3.11"
+    pythonVersion: "3.14"
     startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT --workers 4"
     buildCommand: "pip install -r backend/requirements.txt"
     rootDir: "backend"
@@ -13,11 +13,9 @@ services:
         # Set this to your Render PostgreSQL database connection string
         # Format: postgresql://user:password@hostname:port/database_name
       - key: ALLOWED_ORIGINS
-        value: "http://localhost:3000,https://your-frontend-domain.vercel.app"
-        # Update this with your actual Vercel frontend URL
+        value: "http://localhost:3000,https://campus-lost-found-system-olive.vercel.app"
       - key: JWT_SECRET
         generateValue: true
-        # Render will auto-generate this
       - key: ENVIRONMENT
         value: "production"
       - key: WORKERS

@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
-import logging
 
 from database import Base, engine, SessionLocal
 from models.user import User
@@ -9,16 +8,7 @@ from models.item import Item
 from models.claim import Claim
 from routers import auth, items, claims
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# Create tables
-try:
-    Base.metadata.create_all(bind=engine)
-    logger.info("✓ Database tables created successfully")
-except Exception as e:
-    logger.error(f"✗ Error creating database tables: {e}")
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -35,10 +25,6 @@ def seed_admin_user():
             )
             db.add(admin_user)
             db.commit()
-            logger.info("✓ Admin user seeded")
-    except Exception as e:
-        logger.warning(f"⚠ Could not seed admin user: {e}")
-        db.rollback()
     finally:
         db.close()
 
@@ -56,19 +42,15 @@ def seed_demo_data():
         created_users = {}
         from sqlalchemy import func
         for u in demo_users:
-            try:
-                existing = db.query(User).filter(func.lower(User.email) == u['email'].lower()).first()
-                if not existing:
-                    user = User(username=u['username'], email=u['email'].lower(), hashed_password=u['password'])
-                    db.add(user)
-                    db.commit()
-                    db.refresh(user)
-                    created_users[u['username']] = user
-                else:
-                    created_users[u['username']] = existing
-            except Exception as e:
-                logger.warning(f"⚠ Could not seed user {u['username']}: {e}")
-                db.rollback()
+            existing = db.query(User).filter(func.lower(User.email) == u['email'].lower()).first()
+            if not existing:
+                user = User(username=u['username'], email=u['email'].lower(), hashed_password=u['password'])
+                db.add(user)
+                db.commit()
+                db.refresh(user)
+                created_users[u['username']] = user
+            else:
+                created_users[u['username']] = existing
 
         # Demo items (past reports)
         demo_items = [
@@ -101,25 +83,21 @@ def seed_demo_data():
         created_items = {}
         from models.claim import Claim
         for item_data in demo_items:
-            try:
-                existing_item = db.query(Item).filter(Item.name == item_data['name']).first()
-                if not existing_item:
-                    new_item = Item(
-                        name=item_data['name'],
-                        category=item_data['category'],
-                        description=item_data['description'],
-                        location=item_data['location'],
-                        item_type=item_data['item_type'],
-                    )
-                    db.add(new_item)
-                    db.commit()
-                    db.refresh(new_item)
-                    created_items[item_data['name']] = new_item
-                else:
-                    created_items[item_data['name']] = existing_item
-            except Exception as e:
-                logger.warning(f"⚠ Could not seed item {item_data['name']}: {e}")
-                db.rollback()
+            existing_item = db.query(Item).filter(Item.name == item_data['name']).first()
+            if not existing_item:
+                new_item = Item(
+                    name=item_data['name'],
+                    category=item_data['category'],
+                    description=item_data['description'],
+                    location=item_data['location'],
+                    item_type=item_data['item_type'],
+                )
+                db.add(new_item)
+                db.commit()
+                db.refresh(new_item)
+                created_items[item_data['name']] = new_item
+            else:
+                created_items[item_data['name']] = existing_item
 
         # Demo claims for Najib and Mykes
         najib_user = created_users.get('najib')
@@ -131,41 +109,29 @@ def seed_demo_data():
                 ('Graphite pencil case', 'Claim by Najib for lost stationery case', 'najib', najib_user.email, 'Pending'),
             ]
             for item_name, proof, claimant_name, claimant_email, status in najib_claims:
-                try:
-                    item = created_items.get(item_name)
-                    if item:
-                        claim_exist = db.query(Claim).filter(Claim.user_id == najib_user.id, Claim.item_id == item.id).first()
-                        if not claim_exist:
-                            claim = Claim(
-                                user_id=najib_user.id,
-                                item_id=item.id,
-                                proof=proof,
-                                claimant_name=claimant_name,
-                                claimant_email=claimant_email,
-                                status=status,
-                            )
-                            db.add(claim)
-                            db.commit()
-                except Exception as e:
-                    logger.warning(f"⚠ Could not seed claim for {item_name}: {e}")
-                    db.rollback()
+                item = created_items.get(item_name)
+                if item:
+                    claim_exist = db.query(Claim).filter(Claim.user_id == najib_user.id, Claim.item_id == item.id).first()
+                    if not claim_exist:
+                        claim = Claim(
+                            user_id=najib_user.id,
+                            item_id=item.id,
+                            proof=proof,
+                            claimant_name=claimant_name,
+                            claimant_email=claimant_email,
+                            status=status,
+                        )
+                        db.add(claim)
+                        db.commit()
 
         if mykes_user and created_items.get('Blue backpack (2025)'):
-            try:
-                item1 = created_items['Blue backpack (2025)']
-                claim_exist = db.query(Claim).filter(Claim.user_id == mykes_user.id, Claim.item_id == item1.id).first()
-                if not claim_exist:
-                    claim = Claim(user_id=mykes_user.id, item_id=item1.id, proof='Claim by Mykes for backpack (2025)', claimant_name='mykes', claimant_email=mykes_user.email, status='Resolved')
-                    db.add(claim)
-                    db.commit()
-            except Exception as e:
-                logger.warning(f"⚠ Could not seed mykes claim: {e}")
-                db.rollback()
-                
-        logger.info("✓ Demo data seeding completed")
-    except Exception as e:
-        logger.warning(f"⚠ Demo data seeding error: {e}")
-        db.rollback()
+            item1 = created_items['Blue backpack (2025)']
+            claim_exist = db.query(Claim).filter(Claim.user_id == mykes_user.id, Claim.item_id == item1.id).first()
+            if not claim_exist:
+                claim = Claim(user_id=mykes_user.id, item_id=item1.id, proof='Claim by Mykes for backpack (2025)', claimant_name='mykes', claimant_email=mykes_user.email, status='Resolved')
+                db.add(claim)
+                db.commit()
+
     finally:
         db.close()
 
@@ -177,7 +143,7 @@ if allowed_origins_env:
 else:
     allowed_origins = ["*"]
 
-logger.info(f"Allowed CORS origins: {allowed_origins}")
+print(f"Allowed CORS origins: {allowed_origins}")
 
 app.add_middleware(
     CORSMiddleware,
